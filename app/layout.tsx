@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Bricolage_Grotesque, Instrument_Serif, Geist_Mono, Anton, Syne } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -48,7 +50,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${bricolage.variable} ${instrument.variable} ${geistMono.variable} ${anton.variable} ${syne.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel's own analytics. Cookieless and no consent banner to add,
+            which is the point: a banner would be the first thing anyone sees
+            on a portfolio. Analytics counts visits, Speed Insights reports the
+            Core Web Vitals real visitors actually get. Both are inert until
+            switched on for the project in the dashboard. */}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
