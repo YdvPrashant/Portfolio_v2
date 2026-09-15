@@ -1,4 +1,4 @@
-/* Art for the conflict detection panel.
+/* Art for the conflict detection project.
 
    Deliberately a diagram, not a fabricated screenshot. Mocking up bounding
    boxes over stock footage with "weapon detected" on them would be inventing
@@ -7,13 +7,11 @@
    anyway: the cheap stage runs on every scored frame and the two expensive ones
    only run when it fires.
 
-   Pure SVG with no client JavaScript, so it scales to any panel size and costs
-   nothing to render. */
+   Pure SVG with no client JavaScript, so it scales to any plate and costs nothing
+   to render. It has no background of its own and takes every colour from the
+   page's tokens, so it sits on whichever plate holds it, on Projects or About. */
 
-const BONE = "#f4f1e9";
-const ACID = "#e9ff3d";
-const DIM = "rgba(244,241,233,0.28)";
-const INK = "#0b0b0b";
+const MONO = "var(--font-geist-mono)";
 
 const FRAMES = 27;
 
@@ -32,9 +30,7 @@ export default function PipelineDiagram() {
       role="img"
       aria-label="Diagram of the three stage cascade: person detection on every third frame, with conflict and weapon detection gated behind it"
     >
-      <rect width="800" height="560" fill={INK} />
-
-      <text x="48" y="62" fill={BONE} fontSize="15" letterSpacing="3" opacity="0.55" style={{ fontFamily: "var(--font-geist-mono)" }}>
+      <text x="48" y="62" fontSize="15" letterSpacing="3" style={{ fontFamily: MONO, fill: "var(--muted)" }}>
         1280 × 720 IN
       </text>
 
@@ -48,17 +44,18 @@ export default function PipelineDiagram() {
             y={84}
             width={12}
             height={scored ? 46 : 30}
-            fill={scored ? ACID : DIM}
+            style={{ fill: scored ? "var(--accent)" : "var(--muted)", opacity: scored ? 1 : 0.35 }}
           />
         );
       })}
 
-      <text x="48" y="158" fill={BONE} fontSize="14" letterSpacing="2" opacity="0.45" style={{ fontFamily: "var(--font-geist-mono)" }}>
+      <text x="48" y="158" fontSize="14" letterSpacing="2" style={{ fontFamily: MONO, fill: "var(--muted)" }}>
         EVERY THIRD FRAME SCORED
       </text>
 
       {STAGES.map((s, i) => {
         const y = 208 + i * 104;
+        const fg = s.gated ? "var(--ink)" : "var(--on-accent)";
         return (
           <g key={s.n}>
             {/* Solid for the stage that always runs, outlined for the two that
@@ -68,25 +65,64 @@ export default function PipelineDiagram() {
               y={y}
               width="704"
               height="72"
-              fill={s.gated ? "none" : ACID}
-              stroke={s.gated ? BONE : ACID}
-              strokeOpacity={s.gated ? 0.5 : 1}
               strokeWidth="1.5"
+              style={{
+                fill: s.gated ? "none" : "var(--accent)",
+                stroke: s.gated ? "var(--ink)" : "var(--accent)",
+                strokeOpacity: s.gated ? 0.4 : 1,
+              }}
             />
-            <text x="76" y={y + 44} fill={s.gated ? BONE : INK} fontSize="15" letterSpacing="3" opacity={s.gated ? 0.5 : 1} style={{ fontFamily: "var(--font-geist-mono)" }}>
+            <text
+              x="76"
+              y={y + 44}
+              fontSize="15"
+              letterSpacing="3"
+              style={{ fontFamily: MONO, fill: fg, opacity: s.gated ? 0.55 : 1 }}
+            >
               {s.n}
             </text>
-            <text x="132" y={y + 46} fill={s.gated ? BONE : INK} fontSize="30" style={{ fontFamily: "var(--font-archivo)", fontWeight: 900, letterSpacing: "-0.02em" }}>
+            <text
+              x="132"
+              y={y + 46}
+              fontSize="30"
+              style={{
+                fontFamily: "var(--font-archivo)",
+                fontWeight: 900,
+                letterSpacing: "-0.02em",
+                fill: fg,
+                opacity: s.gated ? 0.8 : 1,
+              }}
+            >
               {s.name}
             </text>
-            <text x="724" y={y + 44} textAnchor="end" fill={s.gated ? BONE : INK} fontSize="15" letterSpacing="2" opacity={s.gated ? 0.5 : 0.75} style={{ fontFamily: "var(--font-geist-mono)" }}>
+            <text
+              x="724"
+              y={y + 44}
+              textAnchor="end"
+              fontSize="15"
+              letterSpacing="2"
+              style={{ fontFamily: MONO, fill: fg, opacity: s.gated ? 0.55 : 0.75 }}
+            >
               {s.model}
             </text>
 
             {i < STAGES.length - 1 ? (
               <>
-                <line x1="88" y1={y + 72} x2="88" y2={y + 104} stroke={BONE} strokeOpacity="0.45" strokeWidth="1.5" />
-                <text x="104" y={y + 96} fill={BONE} fontSize="13" letterSpacing="2" opacity="0.4" style={{ fontFamily: "var(--font-geist-mono)" }}>
+                <line
+                  x1="88"
+                  y1={y + 72}
+                  x2="88"
+                  y2={y + 104}
+                  strokeWidth="1.5"
+                  style={{ stroke: "var(--ink)", strokeOpacity: 0.4 }}
+                />
+                <text
+                  x="104"
+                  y={y + 96}
+                  fontSize="13"
+                  letterSpacing="2"
+                  style={{ fontFamily: MONO, fill: "var(--muted)" }}
+                >
                   ONLY IF IT FIRES
                 </text>
               </>
@@ -95,7 +131,7 @@ export default function PipelineDiagram() {
         );
       })}
 
-      <text x="48" y="540" fill={BONE} fontSize="14" letterSpacing="2" opacity="0.45" style={{ fontFamily: "var(--font-geist-mono)" }}>
+      <text x="48" y="540" fontSize="14" letterSpacing="2" style={{ fontFamily: MONO, fill: "var(--muted)" }}>
         DIAGRAM, NOT A SCREENSHOT
       </text>
     </svg>

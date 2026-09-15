@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-/* The like count. A heart, at his request, outlined until you click it and
-   solid afterwards.
+/* The like count. A heart, at his request, outlined until you click it and solid
+   in the accent afterwards. It takes the page's ink, so it needs no colour
+   passed in.
 
    The count is fetched after mount rather than server rendered, so the page
    itself stays static and cacheable and only this number is live. Until it
@@ -13,7 +14,7 @@ import { useEffect, useState } from "react";
    has already liked, and it answers with the real count, but making someone
    wait on a round trip to see their own click land feels broken. */
 
-export default function LikeButton({ tone }: { tone: string }) {
+export default function LikeButton() {
   const [count, setCount] = useState<number | null>(null);
   const [liked, setLiked] = useState(false);
   const [ready, setReady] = useState(true);
@@ -54,13 +55,13 @@ export default function LikeButton({ tone }: { tone: string }) {
   if (!ready) return null;
 
   return (
-    <div className="flex items-center gap-4" style={{ color: tone }}>
+    <div className="flex items-center gap-4">
       <button
         onClick={like}
         disabled={liked}
         aria-pressed={liked}
         aria-label={liked ? "You liked this site" : "Like this site"}
-        className="group transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-110 active:scale-95 disabled:hover:scale-100"
+        className="transition-[scale,color] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-110 hover:text-accent active:scale-95 disabled:text-accent disabled:hover:scale-100"
       >
         <svg
           viewBox="0 0 24 24"
@@ -76,7 +77,7 @@ export default function LikeButton({ tone }: { tone: string }) {
       </button>
 
       <span
-        className="font-[family-name:var(--font-archivo)] font-black leading-none tracking-[-0.04em] tabular-nums"
+        className="font-display font-black leading-none tracking-[-0.04em] tabular-nums"
         style={{ fontSize: "clamp(1.6rem, 3.4vw, 2.8rem)" }}
       >
         {count === null ? "—" : count.toLocaleString("en-IN")}

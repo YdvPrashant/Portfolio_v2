@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Archivo, Bricolage_Grotesque, Instrument_Serif, Geist_Mono, Anton, Syne } from "next/font/google";
+import { Archivo, Instrument_Serif, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import SiteNav from "@/components/SiteNav";
+import { DEFAULT_PALETTE, PALETTE_SCRIPT } from "@/lib/palette";
 import "./globals.css";
+
+/* Anton, Syne and Bricolage Grotesque are only used by the archived landing
+   rounds, so they load in app/archive/layout.tsx rather than being preloaded on
+   every page of the live site. */
 
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   axes: ["wdth"],
-});
-
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
-  axes: ["opsz", "wdth"],
 });
 
 const instrument = Instrument_Serif({
@@ -28,17 +28,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const anton = Anton({
-  variable: "--font-anton",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Prashant Yadav",
   description: "Software engineer working across full-stack web and applied ML.",
@@ -48,9 +37,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${bricolage.variable} ${instrument.variable} ${geistMono.variable} ${anton.variable} ${syne.variable}`}
+      data-palette={DEFAULT_PALETTE}
+      className={`${archivo.variable} ${instrument.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Applies the visitor's stored colour theme before first paint, so a
+            returning visitor never sees the default flash first. */}
+        <script dangerouslySetInnerHTML={{ __html: PALETTE_SCRIPT }} />
+      </head>
       <body>
+        <SiteNav />
         {children}
         {/* Vercel's own analytics. Cookieless and no consent banner to add,
             which is the point: a banner would be the first thing anyone sees

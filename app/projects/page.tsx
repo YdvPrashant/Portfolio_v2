@@ -1,26 +1,12 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
+import PageTransition from "@/components/PageTransition";
 import ProjectSlider from "@/components/projects/ProjectSlider";
 import { person, projects } from "@/lib/content";
+import { projectImage } from "@/lib/project-images";
 
-/* Projects. Three panels on one horizontal track, because they were never
-   meant to stack down the page.
-
-   The screenshot for each is resolved here, at build time, by looking for a
-   file named after the project id in public/projects. Drop one in and it
-   replaces the placeholder with no code change; until then the panel shows a
-   marked-up box naming the file it wants. */
-
-const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif"];
-
-function findImage(id: string): string | null {
-  const dir = path.join(process.cwd(), "public", "projects");
-  for (const ext of EXTENSIONS) {
-    if (fs.existsSync(path.join(dir, id + "." + ext))) return "/projects/" + id + "." + ext;
-  }
-  return null;
-}
+/* Projects. Three panels on one horizontal track, because they were never meant
+   to stack down the page. Screenshots are resolved at build time; see
+   lib/project-images.ts. */
 
 export const metadata: Metadata = {
   title: "Projects / " + person.full,
@@ -28,12 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  const images = Object.fromEntries(projects.map((p) => [p.id, findImage(p.id)]));
+  const images = Object.fromEntries(projects.map((p) => [p.id, projectImage(p.id)]));
 
   return (
-    <main>
-      <h1 className="sr-only">Projects</h1>
-      <ProjectSlider images={images} />
-    </main>
+    <PageTransition>
+      <main>
+        <ProjectSlider images={images} />
+      </main>
+    </PageTransition>
   );
 }

@@ -1,43 +1,49 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { typing } from "@/lib/content";
 
-/* Type the line, find out whether you are faster than he is.
+/* A typing race against him.
 
-   Strict: a wrong key does not advance. The character you owe turns red and
-   stays there until you hit it. So `typed` only ever holds characters that were
-   correct, which makes it a prefix of the prompt by construction and means the
-   word count can never drift out of step with what is on screen.
+   It says it is a race before anyone types: the headline asks whether you can
+   type faster than him, and the line under the sentence keeps your speed beside
+   his the whole way. The first key starts the clock. His pace, 74.8 wpm being
+   74.8 × 5 characters a minute, runs in the background from that moment, so the
+   line can say who is ahead.
 
-   Net WPM, the standard definition: correct characters over five, per minute.
-   Five characters is the conventional word length. Because wrong keys never
-   land, every character counted is one that was actually right.
+   When the sentence is finished the result comes up over the sentence itself, in
+   type the size of a headline, and the section keeps its height: the result used
+   to arrive underneath and push the page down. The progress bars that stood
+   above the sentence came out at his request.
 
-   Accuracy is measured on keystrokes, not on the final text. Getting a letter
-   wrong and then fixing it should cost you something, or accuracy would always
-   read a hundred percent.
+   The typing rules are unchanged. Strict: a wrong key does not advance and the
+   character you owe turns red until you hit it, so `typed` is always a correct
+   prefix of the prompt. Net WPM is correct characters over five, per minute.
+   Accuracy counts keystrokes, so a fixed mistake still costs. Paste is blocked.
+   Input is a real textarea held invisible over the prompt, so phone keyboards,
+   held keys and IMEs behave.
 
-   Timing is stamped on each keystroke rather than read during render. Reading
-   the clock while rendering is impure, and it would also keep inflating the
-   elapsed time while someone sits idle mid sentence.
-
-   Paste is blocked; one ctrl+V would otherwise report thousands of words a
-   minute. Input is a real textarea held invisible over the prompt rather than a
-   keydown listener, so phone keyboards, held keys and IMEs all behave. */
+   Time is stamped on keystrokes, and while a race runs an interval ticks the
+   clock into state ten times a second. Nothing reads the clock during render. */
 
 const TARGET = typing.wpm;
 const PROMPTS = typing.prompts;
+// His pace in characters a second, a word being five characters.
+const CPS = (TARGET * 5) / 60;
 
-const INK = "#0b0b0b";
-const BONE = "#f4f1e9";
-const ACID = "#e9ff3d";
-const WRONG = "#ff3b1f";
+type Tone = "muted" | "accent" | "wrong" | "ink";
+
+const TONE: Record<Tone, string> = {
+  muted: "text-muted",
+  accent: "text-accent",
+  wrong: "text-(--wrong)",
+  ink: "text-ink",
+};
 
 export default function TypingTest() {
-  /* Starts on the same prompt for everyone and advances on each retry. Picking
-     at random on mount would either mismatch what the server rendered or mean
-     setting state in an effect for something nobody needs resolved that way. */
+  /* Starts on the same prompt for everyone and advances on "New sentence".
+     Picking at random on mount would either mismatch what the server rendered
+     or mean setting state in an effect for something nobody needs resolved. */
   const [promptIndex, setPromptIndex] = useState(0);
   const prompt = PROMPTS[promptIndex];
 
@@ -46,18 +52,33 @@ export default function TypingTest() {
   const [errors, setErrors] = useState(0);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [lastAt, setLastAt] = useState<number | null>(null);
+  const [tick, setTick] = useState<number | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const done = typed.length === prompt.length && prompt.length > 0;
+  const racing = startedAt !== null && !done;
 
-  const { wpm, accuracy } = useMemo(() => {
-    const minutes = startedAt && lastAt ? (lastAt - startedAt) / 60000 : 0;
-    const strokes = typed.length + errors;
-    return {
-      wpm: minutes > 0 ? typed.length / 5 / minutes : 0,
-      accuracy: strokes > 0 ? (typed.length / strokes) * 100 : 100,
-    };
-  }, [typed, errors, startedAt, lastAt]);
+  // The race clock, running only between the first key and the last.
+  useEffect(() => {
+    if (!racing) return;
+    const id = window.setInterval(() => setTick(Date.now()), 100);
+    return () => window.clearInterval(id);
+  }, [racing]);
+
+  // Live while racing, frozen at the last keystroke once the line is finished.
+  const clock = done ? lastAt : Math.max(tick ?? 0, lastAt ?? 0);
+  const seconds = startedAt !== null && clock ? Math.max(0, (clock - startedAt) / 1000) : 0;
+
+  const wpm = seconds > 0 ? typed.length / 5 / (seconds / 60) : 0;
+  const strokes = typed.length + errors;
+  const accuracy = strokes > 0 ? (typed.length / strokes) * 100 : 100;
+
+  const mine = typed.length / prompt.length;
+  const his = startedAt === null ? 0 : Math.min(1, (seconds * CPS) / prompt.length);
+
+  // Judged at the precision shown, so a tie on screen is a tie.
+  const yours = Number(wpm.toFixed(1));
+  const verdict = !done ? null : yours > TARGET ? "win" : yours < TARGET ? "lose" : "tie";
 
   const onChange = (value: string) => {
     if (done) return;
@@ -87,115 +108,152 @@ export default function TypingTest() {
     }
   };
 
-  const nextSentence = () => {
-    setPromptIndex((i) => (i + 1) % PROMPTS.length);
+  const restart = (another: boolean) => {
+    if (another) setPromptIndex((i) => (i + 1) % PROMPTS.length);
     setTyped("");
     setBlocked(false);
     setErrors(0);
     setStartedAt(null);
     setLastAt(null);
+    setTick(null);
     inputRef.current?.focus();
   };
 
-  const faster = wpm > TARGET;
+  let status: { text: string; tone: Tone };
+  if (blocked) status = { text: "Wrong key, the red one is next", tone: "wrong" };
+  else if (startedAt === null) status = { text: "Start typing to race", tone: "muted" };
+  else if (his >= 1) status = { text: "I have finished. You can still finish", tone: "ink" };
+  else if (mine > his) status = { text: "You are ahead", tone: "accent" };
+  else if (mine < his) status = { text: "I am ahead", tone: "ink" };
+  else status = { text: "Level", tone: "ink" };
+
+  const buttonClass =
+    "-my-3 py-3 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-1 underline-offset-4 transition-colors duration-200";
 
   return (
-    <section style={{ background: INK, color: BONE }} className="w-full px-[5.5vw] py-[11vh]">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-55">
-          Type this and find out
-        </h2>
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-55">
-          Prashant: {TARGET} wpm on {typing.source}
-        </p>
-      </div>
-
-      <div className="relative mt-7 cursor-text" onClick={() => inputRef.current?.focus()}>
-        <p className="font-mono text-[clamp(0.95rem,1.9vw,1.6rem)] leading-[1.75] tracking-[0.01em]">
-          {prompt.split("").map((char, i) => {
-            const past = i < typed.length;
-            const here = i === typed.length && !done;
-            const space = char === " ";
-            return (
-              <span
-                key={i}
-                style={{
-                  color: here && blocked ? WRONG : BONE,
-                  opacity: past ? 1 : here ? 1 : 0.28,
-                  background:
-                    here && blocked
-                      ? "rgba(255,59,31,0.22)"
-                      : here && space
-                        ? "rgba(233,255,61,0.25)"
-                        : undefined,
-                  boxShadow: here && !blocked ? `inset 0 -2px 0 ${ACID}` : undefined,
-                }}
-              >
-                {char}
-              </span>
-            );
-          })}
-        </p>
-
-        <textarea
-          ref={inputRef}
-          value={typed}
-          onChange={(e) => onChange(e.target.value)}
-          onPaste={(e) => e.preventDefault()}
-          spellCheck={false}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          aria-label="Type the sentence shown"
-          className="absolute inset-0 h-full w-full resize-none opacity-0"
-        />
-      </div>
-
-      <div
-        className="mt-8 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-5 border-t pt-5"
-        style={{ borderColor: "rgba(244,241,233,0.25)" }}
-      >
-        <div className="flex flex-wrap items-baseline gap-x-9 gap-y-3">
-          <span className="flex items-baseline gap-3">
-            <span
-              className="font-[family-name:var(--font-archivo)] font-black leading-none tabular-nums"
-              style={{ fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)", color: done ? ACID : BONE }}
-            >
-              {startedAt ? wpm.toFixed(1) : "—"}
-            </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-55">wpm</span>
-          </span>
-
-          <span className="flex items-baseline gap-3">
-            <span className="font-mono text-[13px] tabular-nums opacity-75">{accuracy.toFixed(0)}%</span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-55">accurate</span>
-          </span>
-
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-40 tabular-nums">
-            {typed.length} / {prompt.length}
-          </span>
+    <section data-tone="deep" className="w-full bg-ground px-[5.5vw] py-[11vh] text-ink">
+      <div className="grid gap-y-5 lg:grid-cols-12 lg:items-end lg:gap-x-[4vw]">
+        <div className="lg:col-span-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Typing race</p>
+          <h2 className="mt-4 font-display text-[clamp(2.1rem,5.4vw,4.8rem)] font-black uppercase leading-[0.88] tracking-[-0.04em]">
+            Can you type faster than me?
+          </h2>
         </div>
+        <p className="max-w-[40ch] text-[clamp(1rem,1.15vw,1.12rem)] leading-[1.55] text-muted lg:col-span-4">
+          My speed is {TARGET} wpm on {typing.source}. Type the sentence below. The race starts with your first key.
+        </p>
+      </div>
 
-        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
-          <p aria-live="polite" className="font-mono text-[11px] uppercase tracking-[0.18em]">
-            {done ? (
-              <span style={{ color: faster ? ACID : BONE }}>
-                {faster ? "You type faster than me" : "You type slower than me"}
-              </span>
-            ) : blocked ? (
-              <span style={{ color: WRONG }}>Wrong key, the red one is next</span>
-            ) : (
-              <span className="opacity-45">{startedAt ? "Keep going" : "Start typing"}</span>
-            )}
+      {/* The sentence and its line of figures, with the result laid over both
+          when the race is done, so the section never changes height. */}
+      <div className="relative mt-[6vh]">
+        <div className="relative cursor-text" onClick={() => inputRef.current?.focus()}>
+          <p className="font-mono text-[clamp(0.95rem,1.9vw,1.6rem)] leading-[1.75] tracking-[0.01em]">
+            {prompt.split("").map((char, i) => {
+              const past = i < typed.length;
+              const here = i === typed.length && !done;
+              const space = char === " ";
+              return (
+                <span
+                  key={i}
+                  style={{
+                    color: here && blocked ? "var(--wrong)" : "var(--ink)",
+                    opacity: past || here ? 1 : 0.3,
+                    background:
+                      here && blocked
+                        ? "color-mix(in oklab, var(--wrong) 22%, transparent)"
+                        : here && space
+                          ? "color-mix(in oklab, var(--accent) 25%, transparent)"
+                          : undefined,
+                    boxShadow: here && !blocked ? "inset 0 -2px 0 var(--accent)" : undefined,
+                  }}
+                >
+                  {char}
+                </span>
+              );
+            })}
           </p>
 
-          <button
-            onClick={nextSentence}
-            className="font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-1 underline-offset-4 opacity-55 transition-opacity duration-200 hover:opacity-100"
-          >
-            New sentence
-          </button>
+          <textarea
+            ref={inputRef}
+            value={typed}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              // Enter after a finish races the same sentence again.
+              if (done && e.key === "Enter") {
+                e.preventDefault();
+                restart(false);
+              }
+            }}
+            onPaste={(e) => e.preventDefault()}
+            spellCheck={false}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            aria-label="Type the sentence shown to race"
+            className="absolute inset-0 h-full w-full resize-none opacity-0"
+          />
         </div>
+
+        <div className="mt-8 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 border-t border-rule pt-6 font-mono text-[11px] uppercase tracking-[0.2em]">
+          <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
+            <span className="flex items-baseline gap-2">
+              <span className="text-muted">You</span>
+              <span className="text-[13px] tabular-nums text-accent">{startedAt === null ? "0.0" : wpm.toFixed(1)}</span>
+              <span className="text-muted">wpm</span>
+            </span>
+            <span className="flex items-baseline gap-2">
+              <span className="text-muted">Me</span>
+              <span className="text-[13px] tabular-nums">{TARGET}</span>
+              <span className="text-muted">wpm</span>
+            </span>
+            <span className="tabular-nums text-muted">{accuracy.toFixed(0)}% accurate</span>
+            <span className="tabular-nums text-muted">
+              {typed.length} / {prompt.length}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
+            <p aria-live="polite" className={TONE[status.tone]}>
+              {status.text}
+            </p>
+            <button onClick={() => restart(true)} className={buttonClass + " text-muted hover:text-ink"}>
+              New sentence
+            </button>
+          </div>
+        </div>
+
+        {verdict ? (
+          <div
+            role="status"
+            className="absolute inset-0 z-10 flex animate-[rise-in_420ms_cubic-bezier(0.22,1,0.36,1)_both] flex-col justify-center gap-4 bg-ground"
+          >
+            <p
+              className={
+                "font-display text-[clamp(2.4rem,5vw,4.5rem)] font-black uppercase leading-[0.86] tracking-[-0.05em] " +
+                (verdict === "win" ? "text-accent" : verdict === "lose" ? "text-(--wrong)" : "text-ink")
+              }
+            >
+              {verdict === "win" ? "You win" : verdict === "lose" ? "You lose" : "A tie"}
+            </p>
+            <p className="max-w-[52ch] text-[clamp(1rem,1.25vw,1.2rem)] leading-[1.45]">
+              {verdict === "win"
+                ? `You typed ${yours} wpm. I type ${TARGET}, so you beat me.`
+                : verdict === "lose"
+                  ? `You typed ${yours} wpm. I type ${TARGET}, so I win this one.`
+                  : `You typed ${yours} wpm, exactly my speed.`}{" "}
+              <span className="text-muted">{accuracy.toFixed(0)}% accurate.</span>
+            </p>
+            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
+              <button onClick={() => restart(false)} className={buttonClass + " text-ink hover:text-accent"}>
+                Race again
+              </button>
+              <button onClick={() => restart(true)} className={buttonClass + " text-muted hover:text-ink"}>
+                New sentence
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

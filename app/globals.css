@@ -5,18 +5,193 @@
   --font-grotesk: var(--font-bricolage);
   --font-serif: var(--font-instrument);
   --font-mono: var(--font-geist-mono);
+
+  /* Semantic colours. Pages name a role, never a hex value, so a palette is one
+     block of variables below and a section changes tone with data-tone. */
+  --color-ground: var(--ground);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
 }
 
+/* Palettes. Each defines a base tone, the ground most pages stand on, and a deep
+   tone, the darker band under photographs and the typing test. Paper is the
+   default and also sits on :root, so the page is right before any script runs.
+
+   The old site gave every page its own neon ground. These are calm on purpose:
+   low chroma grounds, one accent used sparingly, and the colour turned all the
+   way up in exactly one place, the DSA page, which keeps its own. Vivid, the
+   original neon, stays on offer for visitors who want it. */
+:root,
+[data-palette="paper"] {
+  color-scheme: light;
+  --base-ground: #f2f0ea;
+  --base-raised: #e6e3db;
+  --base-ink: #171614;
+  --base-muted: #67645e;
+  --base-rule: rgb(23 22 20 / 0.14);
+  --base-accent: #3b47d6;
+  --base-on-accent: #f7f6f2;
+
+  --deep-ground: #171614;
+  --deep-raised: #22211e;
+  --deep-ink: #eeebe4;
+  --deep-muted: #9b978f;
+  --deep-rule: rgb(238 235 228 / 0.13);
+  --deep-accent: #aab1ff;
+  --deep-on-accent: #171614;
+
+  --block-1: #8fa2f2;
+  --block-2: #f2a48a;
+  --block-3: #fbfaf6;
+
+  --wrong: #ff8a7a;
+  --avatar-filter: grayscale(1) contrast(1.15);
+  --avatar-blend: multiply;
+}
+
+[data-palette="dusk"] {
+  color-scheme: dark;
+  --base-ground: #201b2b;
+  --base-raised: #2b2539;
+  --base-ink: #efe9df;
+  --base-muted: #a8a1b5;
+  --base-rule: rgb(239 233 223 / 0.14);
+  --base-accent: #f2b48c;
+  --base-on-accent: #201b2b;
+
+  --deep-ground: #15121d;
+  --deep-raised: #211c2c;
+  --deep-ink: #efe9df;
+  --deep-muted: #9e97ab;
+  --deep-rule: rgb(239 233 223 / 0.12);
+  --deep-accent: #f2b48c;
+  --deep-on-accent: #15121d;
+
+  /* The three blocks behind the name on Home. The name crosses all of them,
+     so each keeps the ink readable: mid to dark on a dark ground, light on a
+     light one. */
+  --block-1: #5a4a86;
+  --block-2: #b0674b;
+  --block-3: #15121d;
+
+  --wrong: #ff8a7a;
+  --avatar-filter: grayscale(1) invert(1) contrast(1.1);
+  --avatar-blend: screen;
+}
+
+/* Vivid: the site's original colours, acid yellow with violet, blue and bone,
+   offered as a choice rather than the default. About, Skills and Contact take
+   back their original grounds too, further down. */
+[data-palette="vivid"] {
+  color-scheme: light;
+  --base-ground: #e9ff3d;
+  --base-raised: #f4f1e9;
+  --base-ink: #0b0b0b;
+  --base-muted: #4f5418;
+  --base-rule: rgb(11 11 11 / 0.22);
+  --base-accent: #7b3dff;
+  --base-on-accent: #ffffff;
+
+  --deep-ground: #0b0b0b;
+  --deep-raised: #1c1c1c;
+  --deep-ink: #f4f1e9;
+  --deep-muted: #9c998f;
+  --deep-rule: rgb(244 241 233 / 0.2);
+  --deep-accent: #e9ff3d;
+  --deep-on-accent: #0b0b0b;
+
+  --block-1: #7b3dff;
+  --block-2: #2f6bff;
+  --block-3: #f4f1e9;
+
+  --wrong: #ff3b1f;
+  --avatar-filter: grayscale(1) contrast(1.15);
+  --avatar-blend: multiply;
+}
+
+/* Tones. What the utilities actually read. */
+:root,
+[data-tone="base"] {
+  --ground: var(--base-ground);
+  --raised: var(--base-raised);
+  --ink: var(--base-ink);
+  --muted: var(--base-muted);
+  --rule: var(--base-rule);
+  --accent: var(--base-accent);
+  --on-accent: var(--base-on-accent);
+}
+
+[data-tone="deep"] {
+  color-scheme: dark;
+  --ground: var(--deep-ground);
+  --raised: var(--deep-raised);
+  --ink: var(--deep-ink);
+  --muted: var(--deep-muted);
+  --rule: var(--deep-rule);
+  --accent: var(--deep-accent);
+  --on-accent: var(--deep-on-accent);
+}
+
+/* DSA keeps the colours it was built with, whatever the palette. */
+[data-tone="dsa"] {
+  color-scheme: dark;
+  --ground: #053c2b;
+  --raised: #0b4a36;
+  --ink: #f4f1e9;
+  --muted: rgb(244 241 233 / 0.6);
+  --rule: rgb(244 241 233 / 0.22);
+  --accent: #e9ff3d;
+  --on-accent: #0b0b0b;
+}
+
+/* Vivid only: the pages that had a ground of their own in the original site take
+   it back. The nav carries the same data-page, so it matches the page under it.
+   A deep section inside one of these pages sets its own tone and is unaffected. */
+[data-palette="vivid"] [data-page="about"] {
+  color-scheme: dark;
+  --ground: #2e0c7a;
+  --raised: #3b1a8c;
+  --ink: #ffffff;
+  --muted: #c2b6e6;
+  --rule: rgb(255 255 255 / 0.22);
+  --accent: #e9ff3d;
+  --on-accent: #0b0b0b;
+}
+
+[data-palette="vivid"] [data-page="skills"] {
+  color-scheme: dark;
+  --ground: #2a5ef0;
+  --raised: #2150d4;
+  --ink: #ffffff;
+  --muted: #eef2fe;
+  --rule: rgb(255 255 255 / 0.26);
+  --accent: #e9ff3d;
+  --on-accent: #0b0b0b;
+}
+
+[data-palette="vivid"] [data-page="contact"] {
+  --ground: #ff2d6f;
+  --raised: #ff5a8c;
+  --ink: #0b0b0b;
+  --muted: #3d0a1b;
+  --rule: rgb(11 11 11 / 0.3);
+  --accent: #ffffff;
+  --on-accent: #0b0b0b;
+}
+
+/* The fixed nav's height, which every page reserves at its top. */
 :root {
-  --ink-ultramarine: #1400c8;
-  --ink-red: #ff3b1f;
-  --ink-emerald: #00c08b;
-  --ink-violet: #7b2ff7;
-  --ink-amber: #ffb100;
-  --ink-sky: #00a3ff;
-  --ink-magenta: #e8005a;
-  --paper: #f2ede1;
-  --carbon: #0e0e0e;
+  --nav-h: 3.5rem;
+}
+
+@media (width >= 40rem) {
+  :root {
+    --nav-h: 4.75rem;
+  }
 }
 
 @layer base {
@@ -34,6 +209,8 @@
   }
 
   body {
+    background: var(--ground);
+    color: var(--ink);
     font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -48,7 +225,9 @@
   figure,
   blockquote,
   ul,
-  ol {
+  ol,
+  dl,
+  dd {
     margin: 0;
     padding: 0;
   }
@@ -73,13 +252,12 @@
   }
 
   ::selection {
-    background: var(--ink-red);
-    color: #fff;
+    background: var(--accent);
+    color: var(--on-accent);
   }
 }
 
-/* Paper grain, used by the print led surfaces. One shared definition so the
-   texture reads as the same stock everywhere it appears. */
+/* Paper grain, used by the archived print led surfaces. */
 .grain::after {
   content: "";
   position: absolute;
@@ -92,10 +270,8 @@
 }
 
 @layer components {
-  /* The contact page's cursor-following disc. Hidden by CSS rather than by
-     state, so there is nothing to resolve after hydration. It has no meaning
-     without a real cursor: on a touchscreen it would park wherever the last tap
-     landed and read as a bug. */
+  /* The archived Contact page's cursor disc (/archive/v3). Hidden by CSS rather
+     than by state, and never on a touchscreen. */
   .cursor-disc {
     display: block;
   }
@@ -104,6 +280,168 @@
     .cursor-disc {
       display: none;
     }
+  }
+
+  /* The scroll cue's line: a short segment that runs down its track. */
+  .scroll-cue-line::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 45%;
+    background: currentColor;
+    animation: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  70%,
+  100% {
+    transform: translateY(230%);
+  }
+}
+
+@layer components {
+  /* Creative work. The letters of Photography are a window onto one of his
+     photographs: the word is filled with the picture and clipped to the
+     letterforms, and the pale wash the component lays over the image lifts the
+     darker frames enough to read the word. */
+  .photo-fill {
+    background-size: cover;
+    background-position: center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* The same idea for graphic design, which has nothing to show yet: hatching
+     instead of a photograph, shifting when you point at it. When there are files
+     to show, the word can be filled with them the same way. */
+  .hatch-fill {
+    background-image: repeating-linear-gradient(135deg, var(--ink) 0 2px, transparent 2px 9px);
+    background-size: 200% 200%;
+    background-position: 0% 0%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: background-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .group:hover .hatch-fill {
+    background-position: 28% 0%;
+  }
+
+  /* Where a background cannot be clipped to text, the words simply take the ink. */
+  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+    .photo-fill,
+    .hatch-fill {
+      background-image: none !important;
+      color: var(--ink);
+    }
+  }
+}
+
+/* A short fade and rise, for panels and results that appear in place. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page transitions. React's <ViewTransition> tags each page with one of these
+   classes. nav-forward and nav-back slide a short way in the direction of
+   travel; anything untyped, like the browser's own back button, just fades.
+   The nav is named site-nav and holds still over all of it. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.nav-forward),
+::view-transition-old(.nav-back) {
+  animation:
+    180ms cubic-bezier(0.4, 0, 1, 1) both vt-fade reverse,
+    440ms cubic-bezier(0.22, 1, 0.36, 1) both vt-slide reverse;
+}
+
+::view-transition-new(.nav-forward),
+::view-transition-new(.nav-back) {
+  animation:
+    300ms cubic-bezier(0, 0, 0.2, 1) 120ms both vt-fade,
+    440ms cubic-bezier(0.22, 1, 0.36, 1) both vt-slide;
+}
+
+::view-transition-old(.nav-forward) {
+  --vt-offset: -44px;
+}
+::view-transition-new(.nav-forward) {
+  --vt-offset: 44px;
+}
+::view-transition-old(.nav-back) {
+  --vt-offset: 44px;
+}
+::view-transition-new(.nav-back) {
+  --vt-offset: -44px;
+}
+
+::view-transition-old(.page-fade) {
+  animation: 160ms cubic-bezier(0.4, 0, 1, 1) both vt-fade reverse;
+}
+
+::view-transition-new(.page-fade) {
+  animation: 280ms cubic-bezier(0, 0, 0.2, 1) 100ms both vt-fade;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: 560ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: vt-via-blur;
+}
+
+::view-transition-group(site-nav) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-nav) {
+  display: none;
+}
+
+::view-transition-new(site-nav) {
+  animation: none;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-slide {
+  from {
+    translate: var(--vt-offset) 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes vt-via-blur {
+  30% {
+    filter: blur(3px);
   }
 }
 
@@ -114,5 +452,12 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

@@ -49,3 +49,7 @@ references/
 .agents/
 .claude/
 skills-lock.json
+
+
+CLAUDE.md
+AGENTS.md

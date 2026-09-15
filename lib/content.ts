@@ -29,14 +29,17 @@ export type NavItem = {
 export const CARBON = "#0e0e0e";
 export const ULTRAMARINE = "#1400c8";
 
-// Every page owns one colour. This is the spine of the whole system.
+/* Read only by the archived landing rounds (/archive/v1, v2, v3), colours and
+   all. The live site's sequence of pages is lib/sections.ts. The notes were
+   corrected on 2026-09-15: they had claimed a reply time nobody promised and
+   the wrong counts. */
 export const nav: NavItem[] = [
   { n: "01", label: "About", href: "/about", note: "Where the work comes from", ink: "#FF3B1F", on: "#FFFFFF" },
-  { n: "02", label: "Skills", href: "/skills", note: "Twenty six tools, no adjectives", ink: "#00C08B", on: CARBON },
-  { n: "03", label: "Projects", href: "/projects", note: "Three shipped, one live", ink: "#FFB100", on: CARBON },
-  { n: "04", label: "DSA", href: "/dsa", note: "300 solved, 1600 rated", ink: "#7B2FF7", on: "#FFFFFF" },
+  { n: "02", label: "Skills", href: "/skills", note: "Twenty five tools, six techniques", ink: "#00C08B", on: CARBON },
+  { n: "03", label: "Projects", href: "/projects", note: "Three projects, one live", ink: "#FFB100", on: CARBON },
+  { n: "04", label: "DSA", href: "/dsa", note: "700+ solved, 1600+ rated", ink: "#7B2FF7", on: "#FFFFFF" },
   { n: "05", label: "Work", href: "/work", note: "Photography and graphic design", ink: "#00A3FF", on: CARBON },
-  { n: "06", label: "Contact", href: "/contact", note: "Reply within a day", ink: "#E8005A", on: "#FFFFFF" },
+  { n: "06", label: "Contact", href: "/contact", note: "Email, LinkedIn, GitHub", ink: "#E8005A", on: "#FFFFFF" },
 ];
 
 export type Project = {
@@ -50,7 +53,6 @@ export type Project = {
   summary: string;
   points: string[];
   metric: { value: string; label: string };
-  ink: string;
 };
 
 export const projects: Project[] = [
@@ -70,7 +72,6 @@ export const projects: Project[] = [
       "Cut a full run to roughly 13 model requests and held 18 of 18 concurrent analyses at HTTP 200 after reverse engineering Google's undocumented 15 requests per minute ceiling from live 429 bodies, then adding Gemini to Groq failover, a four tier extraction fallback and an SSRF guard.",
     ],
     metric: { value: "93.3%", label: "fact check accuracy, zero incorrect verdicts" },
-    ink: "#FFB100",
   },
   {
     id: "conflict",
@@ -88,7 +89,6 @@ export const projects: Project[] = [
       "Set the threshold from the validation PR curve at 0.669 precision and 0.850 recall, cut calibration error from 0.065 to 0.023 with temperature scaling, and exposed 48.6 percent cross split contamination in the weapon dataset with perceptual hashing.",
     ],
     metric: { value: "2.2x", label: "faster per frame, and an honest baseline" },
-    ink: "#FF3B1F",
   },
   {
     id: "ctximg",
@@ -106,7 +106,6 @@ export const projects: Project[] = [
       "Indexing is incremental and crash safe, so an interrupt costs one batch instead of a full re embed. SQLite WAL with per batch commits, path, size and mtime change detection, threaded JPEG decode overlapped with GPU encode across 10 formats including HEIC. Covered by 203 pytest tests, green in 13 seconds.",
     ],
     metric: { value: "100/s", label: "images embedded per second, fully offline" },
-    ink: "#00C08B",
   },
 ];
 
@@ -159,7 +158,10 @@ export const dsa = {
 
    `facts` and `body` deliberately do not overlap. The degree, the LeetCode
    figures and Aurora live only in the fact column; the prose stays narrative.
-   The voice is still a draft of his and is his to rewrite. */
+   The voice is still a draft of his and is his to rewrite.
+
+   Names in `body` marked [like this](key) become links on the About page, and
+   the matching figure shows beside the prose. See components/about/Story.tsx. */
 export const about = {
   lead: "I'm Prashant, a software engineer in Lucknow. I build web applications and machine learning systems, usually end to end, from the interface down to the model.",
   facts: [
@@ -172,10 +174,10 @@ export const about = {
     { label: "Volunteer", value: "Web developer for Aurora, a student organisation, for a year" },
   ],
   body: [
-    "Lately that has meant Prism, which takes a news article and pulls it apart into claims, sources and live fact checks, and ctximg, a photo search app that runs completely offline. You describe what you remember about a photo and it finds it, with no tags or filenames involved.",
-    "Before those I spent about six months on a conflict detection system for video. It reported 98.4 percent accuracy and I did not believe it. The split was the problem. I had divided the data frame by frame, so almost every clip I was testing on had already been seen in training. I redid the split by source video, dropped the near duplicate frames, and the honest number came out at 0.808 PR-AUC across 519 videos the model had never seen.",
+    "Lately that has meant [Prism](prism), which takes a news article and pulls it apart into claims, sources and live fact checks, and [ctximg](ctximg), a photo search app that runs completely offline. You describe what you remember about a photo and it finds it, with no tags or filenames involved.",
+    "Before those I spent about six months on a [conflict detection system](conflict) for video. It reported 98.4 percent accuracy and I did not believe it. The split was the problem. I had divided the data frame by frame, so almost every clip I was testing on had already been seen in training. I redid the split by source video, dropped the near duplicate frames, and the honest number came out at 0.808 PR-AUC across 519 videos the model had never seen.",
     "Most of my time goes on things nobody notices unless they break. Indexing that survives being interrupted without starting over. Failover to a second model provider when the first one starts rate limiting. A fact check that says it could not verify something instead of guessing.",
-    "Outside of code I shoot photographs and do graphic design. Both are on this site.",
+    "Outside of code I shoot [photographs](photos) and do graphic design. Both are on this site.",
   ],
 } as const;
 

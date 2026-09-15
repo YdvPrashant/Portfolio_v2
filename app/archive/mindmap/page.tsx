@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SiteNav from "@/components/SiteNav";
+import SiteNav from "@/components/archive/v3/ArchivedNav";
 import MindMap from "@/components/archive/mindmap/MindMap";
 import { concepts } from "@/lib/skills";
 import { person } from "@/lib/content";

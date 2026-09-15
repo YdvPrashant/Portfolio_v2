@@ -23,9 +23,6 @@ import type { Photo } from "@/lib/unsplash";
    rounded corners, drop shadows and gradients, none of which belong on a site
    built out of flat colour and square edges. */
 
-const BONE = "#f4f1e9";
-const ACID = "#e9ff3d";
-
 type Mode = "mosaic" | "reel";
 
 export default function Gallery({ rows }: { rows: Photo[][] }) {
@@ -42,13 +39,10 @@ export default function Gallery({ rows }: { rows: Photo[][] }) {
             key={m}
             onClick={() => setMode(m)}
             aria-pressed={mode === m}
-            className="-my-2 py-2 font-mono text-[11px] uppercase tracking-[0.2em] transition-opacity duration-200"
-            style={{
-              color: mode === m ? ACID : BONE,
-              opacity: mode === m ? 1 : 0.45,
-              textDecoration: mode === m ? "underline" : "none",
-              textUnderlineOffset: 5,
-            }}
+            className={
+              "-my-2 py-2 font-mono text-[11px] uppercase tracking-[0.2em] underline-offset-[5px] transition-colors duration-200 " +
+              (mode === m ? "text-accent underline" : "text-muted hover:text-ink")
+            }
           >
             {m}
           </button>
@@ -368,11 +362,11 @@ function Reel({ photos }: { photos: Photo[] }) {
       </div>
 
       <div className="mt-[3vh] flex items-center justify-between gap-6 px-[3vw]">
-        <span className="font-mono text-[11px] uppercase tracking-[0.2em] tabular-nums opacity-55">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] tabular-nums text-muted">
           {String(current + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
         </span>
 
-        <div className="flex items-center gap-5" style={{ color: BONE }}>
+        <div className="flex items-center gap-5 text-ink">
           <button
             onClick={() => step(-1)}
             aria-label="Previous photograph"

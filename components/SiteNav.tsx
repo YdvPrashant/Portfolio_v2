@@ -2,70 +2,110 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { nav } from "@/lib/content";
+import { useEffect, useState } from "react";
+import ThemePicker from "@/components/ThemePicker";
+import { SECTIONS, currentSection, directionTo, pageFor, toneFor } from "@/lib/sections";
 
-/* One nav for every page. `tone` is the ink colour, since each page sets its
-   own ground. Clicks stop propagating because the landing treats a click on its
-   own field as a recompose.
+/* One nav for every page, mounted once in the root layout so it survives
+   navigation and holds still while pages change underneath it. The colour theme
+   picker lives at its end.
 
-   The wordmark on the left is the way home. There was no route back to the
-   landing from anywhere before this, which is the one link a nav must have. */
-export default function SiteNav({ tone = "#0b0b0b" }: { tone?: string }) {
+   Fixed rather than in the flow, because on a long page it used to be hundreds
+   of pixels behind you. Scrolling down tucks it away and any scroll back up
+   brings it straight back. Once the page has moved it takes the ground behind
+   it, or the type would run through it. It carries the page's tone and page key,
+   so in a theme where a page has its own ground the nav matches it.
+
+   It shows on Home as well, where the landing's blocks keep clear of its
+   corner. The archive keeps the navs it was built with.
+
+   The padding on the links is for a finger, not a look: at 9.5px they are
+   about twelve pixels tall and a thumb wants forty. The negative margin hands
+   the space back so the row sits where it is drawn. */
+
+const TUCK_AFTER = 120;
+
+type Scroll = { path: string; hidden: boolean; lifted: boolean };
+
+export default function SiteNav() {
   const pathname = usePathname();
-  const home = pathname === "/";
-  // Only dim the others once one of them is actually the page you are on. On
-  // the landing nothing in the list is current, so nothing should look off.
-  const anyCurrent = home || nav.some((item) => item.href === pathname);
+  const [scroll, setScroll] = useState<Scroll>({ path: "", hidden: false, lifted: false });
 
-  /* The padding is a finger, not a look: set at 9.5px these links are about
-     twelve pixels tall, and a thumb wants forty. The negative margin gives the
-     tap area back to the layout so the nav still sits where it is drawn. Kept
-     at every width rather than below sm, because a tablet is a touchscreen at
-     768px and a wider hit area costs a mouse nothing. */
-  const dim = (active: boolean) =>
-    "-my-3 py-3 transition-opacity duration-200 hover:opacity-100 " +
-    (anyCurrent && !active ? "opacity-45" : "opacity-100");
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      // A trackpad settling moves a pixel or two; that is not a direction.
+      if (Math.abs(y - last) < 4) return;
+      const down = y > last;
+      last = y;
+      setScroll((prev) => {
+        const next = { path: window.location.pathname, hidden: down && y > TUCK_AFTER, lifted: y > 8 };
+        return prev.path === next.path && prev.hidden === next.hidden && prev.lifted === next.lifted ? prev : next;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (pathname.startsWith("/archive")) return null;
+
+  /* Scroll state belongs to the page it was recorded on, so a page you have
+     just arrived at always starts with the nav showing. */
+  const here = scroll.path === pathname;
+  const hidden = here && scroll.hidden;
+  const lifted = here && scroll.lifted;
+  const section = currentSection(pathname);
 
   return (
-    <nav
-      /* Six links plus the wordmark do not fit a phone at desktop size: they
-         wrapped onto a second line and, on the pages where the nav floats over
-         the content, landed on top of it. Set smaller and tighter below sm they
-         stay on one line down to about 360px, which is the narrowest phone
-         still worth designing for. The wrap is left in as the fallback rather
-         than a menu button: six links are not enough to hide behind one. */
-      className="relative z-10 flex items-baseline justify-between gap-x-3 gap-y-2 px-[5.5vw] pt-7 font-mono text-[9.5px] uppercase tracking-[0.07em] sm:gap-x-6 sm:pt-10 sm:text-[11px] sm:tracking-[0.18em]"
-      style={{ color: tone }}
+    <header
+      data-tone={toneFor(pathname)}
+      data-page={pageFor(pathname) ?? undefined}
+      style={{ viewTransitionName: "site-nav" }}
+      className={
+        "fixed inset-x-0 top-0 z-50 border-b transition-[translate,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] " +
+        (hidden ? "-translate-y-full " : "translate-y-0 ") +
+        (lifted ? "border-rule bg-ground" : "border-transparent bg-transparent")
+      }
     >
-      <Link
-        href="/"
-        onClick={(e) => e.stopPropagation()}
-        aria-current={home ? "page" : undefined}
-        aria-label="Home"
-        className={
-          "shrink-0 font-[family-name:var(--font-archivo)] text-[13px] font-black tracking-[-0.02em] sm:text-[15px] " +
-          dim(home)
-        }
-      >
-        PY
-      </Link>
+      {/* Seven links, the wordmark and the colour swatch have to hold one line
+          down to 360px, so below sm the gaps and the tracking are tighter. */}
+      <nav className="flex h-(--nav-h) items-center justify-between gap-x-2 px-[5.5vw] font-mono text-[9.5px] uppercase tracking-[0.04em] text-ink sm:gap-x-6 sm:text-[11px] sm:tracking-[0.18em]">
+        <Link
+          href="/"
+          transitionTypes={["nav-back"]}
+          aria-label="Home"
+          aria-current={pathname === "/" ? "page" : undefined}
+          className="-my-3 shrink-0 py-3 font-display text-[13px] font-black tracking-[-0.02em] sm:text-[15px]"
+        >
+          PY
+        </Link>
 
-      <div className="flex flex-wrap justify-end gap-x-3 gap-y-2 sm:gap-x-6">
-        {nav.map((item) => {
-          const here = item.href === pathname;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={(e) => e.stopPropagation()}
-              aria-current={here ? "page" : undefined}
-              className={dim(here)}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+        <div className="flex items-center gap-x-2 sm:gap-x-8">
+          <div className="flex flex-wrap justify-end gap-x-2 gap-y-2 sm:gap-x-6">
+            {SECTIONS.map((s) => {
+              // A gallery is part of Work, so Work stays marked inside one.
+              const active = section?.href === s.href;
+              return (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  transitionTypes={[directionTo(pathname, s.href)]}
+                  aria-current={pathname === s.href ? "page" : active ? "true" : undefined}
+                  className={
+                    "-my-3 py-3 underline-offset-[6px] transition-colors duration-200 hover:text-ink " +
+                    (active ? "text-ink underline decoration-accent decoration-1" : "text-muted")
+                  }
+                >
+                  {s.short ?? s.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          <ThemePicker />
+        </div>
+      </nav>
+    </header>
   );
 }
