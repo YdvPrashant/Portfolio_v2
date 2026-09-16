@@ -46,10 +46,3 @@ next-env.d.ts
 # local working material, not part of the site
 assets/
 references/
-.agents/
-.claude/
-skills-lock.json
-
-
-CLAUDE.md
-AGENTS.md
