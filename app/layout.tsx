@@ -1,59 +1,74 @@
-import type { Metadata } from "next";
-import { Archivo, Instrument_Serif, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Mona_Sans, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import SiteNav from "@/components/SiteNav";
-import { DEFAULT_PALETTE, PALETTE_SCRIPT } from "@/lib/palette";
+import "lenis/dist/lenis.css";
 import "./globals.css";
+import { Header } from "@/components/site/Header";
+import { InlineScript } from "@/components/site/InlineScript";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { person } from "@/lib/content";
+import { introScript } from "@/lib/intro-script";
+import { description, siteUrl } from "@/lib/site";
 
-/* Anton, Syne and Bricolage Grotesque are only used by the archived landing
-   rounds, so they load in app/archive/layout.tsx rather than being preloaded on
-   every page of the live site. */
-
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Mona Sans with its width axis: the hero and the numerals use the extremes.
+const mona = Mona_Sans({
   subsets: ["latin"],
   axes: ["wdth"],
+  variable: "--font-mona",
+  display: "swap",
 });
 
-const instrument = Instrument_Serif({
-  variable: "--font-instrument",
+const newsreader = Newsreader({
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  style: ["italic"],
+  axes: ["opsz"],
+  variable: "--font-news",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-jet",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Prashant Yadav",
-  description: "Software engineer working across full-stack web and applied ML.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${person.name}, software engineer`,
+    template: `%s · ${person.name}`,
+  },
+  description,
+  applicationName: person.name,
+  authors: [{ name: person.name }],
+  openGraph: {
+    type: "website",
+    siteName: person.name,
+    title: `${person.name}, software engineer`,
+    description,
+    locale: "en_IN",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export const viewport: Viewport = {
+  themeColor: "#f0efeb",
+  colorScheme: "light",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      data-palette={DEFAULT_PALETTE}
-      className={`${archivo.variable} ${instrument.variable} ${geistMono.variable}`}
       suppressHydrationWarning
+      className={`${mona.variable} ${newsreader.variable} ${jetbrains.variable}`}
     >
-      <head>
-        {/* Applies the visitor's stored colour theme before first paint, so a
-            returning visitor never sees the default flash first. */}
-        <script dangerouslySetInnerHTML={{ __html: PALETTE_SCRIPT }} />
-      </head>
       <body>
-        <SiteNav />
+        <InlineScript html={introScript} />
+        <Header />
+        <SmoothScroll />
         {children}
-        {/* Vercel's own analytics. Cookieless and no consent banner to add,
-            which is the point: a banner would be the first thing anyone sees
-            on a portfolio. Analytics counts visits, Speed Insights reports the
-            Core Web Vitals real visitors actually get. Both are inert until
-            switched on for the project in the dashboard. */}
         <Analytics />
         <SpeedInsights />
       </body>

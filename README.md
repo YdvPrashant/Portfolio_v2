@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prashant Yadav, portfolio
 
-## Getting Started
+Next.js 16 (App Router, Turbopack), React 19.2, Tailwind CSS 4, Lenis for smooth
+scrolling. Everything else, the canvases included, is written by hand. The
+design notes, including which Awwwards winners each idea came from, are in
+[docs/design.md](docs/design.md).
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build
+npm run lint
+npm run typecheck
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| What | Where |
+| --- | --- |
+| Every word and number on the site | `lib/content.ts` (from `resume/prashant-yadav-resume.tex`) |
+| The CV people download | `public/prashant-yadav-resume.pdf` |
+| Project screenshots | `public/projects/` |
+| Photographs | Live from unsplash.com/@pr7nt through `lib/unsplash.ts`, refreshed hourly |
+| Like counter | `app/api/likes/route.ts`, Upstash Redis through the Vercel Marketplace |
+| Typing speed | `typing.wpm` in `lib/content.ts`, edited by hand (keybr has no API) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment
 
-## Learn More
+Kept in `.env.local`, never committed:
 
-To learn more about Next.js, take a look at the following resources:
+- `UNSPLASH_ACCESS_KEY` for the photographs. Without it the photography
+  sections fall back to a link to the Unsplash profile.
+- `KV_REST_API_URL` and `KV_REST_API_TOKEN` for the like counter, provisioned
+  by the Upstash integration. Without them the like button hides itself.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/` the name, a statement, selected work, measured results, a typing race,
+  photographs, the CV and contact.
+- `/work/prism`, `/work/conflict-detection`, `/work/ctximg` case studies.
+- `/photography` every photograph on an endless field you can drag.

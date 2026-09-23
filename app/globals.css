@@ -1,427 +1,854 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-display: var(--font-archivo);
-  --font-grotesk: var(--font-bricolage);
-  --font-serif: var(--font-instrument);
-  --font-mono: var(--font-geist-mono);
+/* ------------------------------------------------------------------ tokens */
 
-  /* Semantic colours. Pages name a role, never a hex value, so a palette is one
-     block of variables below and a section changes tone with data-tone. */
-  --color-ground: var(--ground);
-  --color-raised: var(--raised);
-  --color-ink: var(--ink);
+@theme {
+  --color-paper: #f0efeb;
+  --color-ink: #0f0f0f;
+  --color-blue: #2b2bff;
+  --color-blue-light: #8f8fff;
+
+  --font-sans: var(--font-mona), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-news), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jet), ui-monospace, "SFMono-Regular", monospace;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* Colours that depend on the ground of the section they sit in. */
+@theme inline {
+  --color-fg: var(--fg);
+  --color-bg: var(--bg);
   --color-muted: var(--muted);
   --color-rule: var(--rule);
   --color-accent: var(--accent);
-  --color-on-accent: var(--on-accent);
 }
 
-/* Palettes. Each defines a base tone, the ground most pages stand on, and a deep
-   tone, the darker band under photographs and the typing test. Paper is the
-   default and also sits on :root, so the page is right before any script runs.
-
-   The old site gave every page its own neon ground. These are calm on purpose:
-   low chroma grounds, one accent used sparingly, and the colour turned all the
-   way up in exactly one place, the DSA page, which keeps its own. Vivid, the
-   original neon, stays on offer for visitors who want it. */
-:root,
-[data-palette="paper"] {
-  color-scheme: light;
-  --base-ground: #f2f0ea;
-  --base-raised: #e6e3db;
-  --base-ink: #171614;
-  --base-muted: #67645e;
-  --base-rule: rgb(23 22 20 / 0.14);
-  --base-accent: #3b47d6;
-  --base-on-accent: #f7f6f2;
-
-  --deep-ground: #171614;
-  --deep-raised: #22211e;
-  --deep-ink: #eeebe4;
-  --deep-muted: #9b978f;
-  --deep-rule: rgb(238 235 228 / 0.13);
-  --deep-accent: #aab1ff;
-  --deep-on-accent: #171614;
-
-  --block-1: #8fa2f2;
-  --block-2: #f2a48a;
-  --block-3: #fbfaf6;
-
-  --wrong: #ff8a7a;
-  --avatar-filter: grayscale(1) contrast(1.15);
-  --avatar-blend: multiply;
-}
-
-[data-palette="dusk"] {
-  color-scheme: dark;
-  --base-ground: #201b2b;
-  --base-raised: #2b2539;
-  --base-ink: #efe9df;
-  --base-muted: #a8a1b5;
-  --base-rule: rgb(239 233 223 / 0.14);
-  --base-accent: #f2b48c;
-  --base-on-accent: #201b2b;
-
-  --deep-ground: #15121d;
-  --deep-raised: #211c2c;
-  --deep-ink: #efe9df;
-  --deep-muted: #9e97ab;
-  --deep-rule: rgb(239 233 223 / 0.12);
-  --deep-accent: #f2b48c;
-  --deep-on-accent: #15121d;
-
-  /* The three blocks behind the name on Home. The name crosses all of them,
-     so each keeps the ink readable: mid to dark on a dark ground, light on a
-     light one. */
-  --block-1: #5a4a86;
-  --block-2: #b0674b;
-  --block-3: #15121d;
-
-  --wrong: #ff8a7a;
-  --avatar-filter: grayscale(1) invert(1) contrast(1.1);
-  --avatar-blend: screen;
-}
-
-/* Vivid: the site's original colours, acid yellow with violet, blue and bone,
-   offered as a choice rather than the default. About, Skills and Contact take
-   back their original grounds too, further down. */
-[data-palette="vivid"] {
-  color-scheme: light;
-  --base-ground: #e9ff3d;
-  --base-raised: #f4f1e9;
-  --base-ink: #0b0b0b;
-  --base-muted: #4f5418;
-  --base-rule: rgb(11 11 11 / 0.22);
-  --base-accent: #7b3dff;
-  --base-on-accent: #ffffff;
-
-  --deep-ground: #0b0b0b;
-  --deep-raised: #1c1c1c;
-  --deep-ink: #f4f1e9;
-  --deep-muted: #9c998f;
-  --deep-rule: rgb(244 241 233 / 0.2);
-  --deep-accent: #e9ff3d;
-  --deep-on-accent: #0b0b0b;
-
-  --block-1: #7b3dff;
-  --block-2: #2f6bff;
-  --block-3: #f4f1e9;
-
-  --wrong: #ff3b1f;
-  --avatar-filter: grayscale(1) contrast(1.15);
-  --avatar-blend: multiply;
-}
-
-/* Tones. What the utilities actually read. */
-:root,
-[data-tone="base"] {
-  --ground: var(--base-ground);
-  --raised: var(--base-raised);
-  --ink: var(--base-ink);
-  --muted: var(--base-muted);
-  --rule: var(--base-rule);
-  --accent: var(--base-accent);
-  --on-accent: var(--base-on-accent);
-}
-
-[data-tone="deep"] {
-  color-scheme: dark;
-  --ground: var(--deep-ground);
-  --raised: var(--deep-raised);
-  --ink: var(--deep-ink);
-  --muted: var(--deep-muted);
-  --rule: var(--deep-rule);
-  --accent: var(--deep-accent);
-  --on-accent: var(--deep-on-accent);
-}
-
-/* DSA keeps the colours it was built with, whatever the palette. */
-[data-tone="dsa"] {
-  color-scheme: dark;
-  --ground: #053c2b;
-  --raised: #0b4a36;
-  --ink: #f4f1e9;
-  --muted: rgb(244 241 233 / 0.6);
-  --rule: rgb(244 241 233 / 0.22);
-  --accent: #e9ff3d;
-  --on-accent: #0b0b0b;
-}
-
-/* Vivid only: the pages that had a ground of their own in the original site take
-   it back. The nav carries the same data-page, so it matches the page under it.
-   A deep section inside one of these pages sets its own tone and is unaffected. */
-[data-palette="vivid"] [data-page="about"] {
-  color-scheme: dark;
-  --ground: #2e0c7a;
-  --raised: #3b1a8c;
-  --ink: #ffffff;
-  --muted: #c2b6e6;
-  --rule: rgb(255 255 255 / 0.22);
-  --accent: #e9ff3d;
-  --on-accent: #0b0b0b;
-}
-
-[data-palette="vivid"] [data-page="skills"] {
-  color-scheme: dark;
-  --ground: #2a5ef0;
-  --raised: #2150d4;
-  --ink: #ffffff;
-  --muted: #eef2fe;
-  --rule: rgb(255 255 255 / 0.26);
-  --accent: #e9ff3d;
-  --on-accent: #0b0b0b;
-}
-
-[data-palette="vivid"] [data-page="contact"] {
-  --ground: #ff2d6f;
-  --raised: #ff5a8c;
-  --ink: #0b0b0b;
-  --muted: #3d0a1b;
-  --rule: rgb(11 11 11 / 0.3);
-  --accent: #ffffff;
-  --on-accent: #0b0b0b;
-}
-
-/* The fixed nav's height, which every page reserves at its top. */
 :root {
-  --nav-h: 3.5rem;
+  --pad: clamp(16px, 3vw, 40px);
+  --gap: clamp(12px, 1.6vw, 24px);
+  --header: 56px;
 }
 
-@media (width >= 40rem) {
-  :root {
-    --nav-h: 4.75rem;
-  }
+/* Every section names its ground. The header reads the same attribute to pick
+   its colour, so nothing is ever light on light. */
+:root,
+[data-theme="paper"] {
+  --bg: var(--color-paper);
+  --fg: var(--color-ink);
+  --muted: #5f5f5b;
+  --rule: rgb(15 15 15 / 0.14);
+  --accent: var(--color-blue);
 }
 
-@layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-  }
-
-  body {
-    background: var(--ground);
-    color: var(--ink);
-    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overscroll-behavior: none;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  p,
-  figure,
-  blockquote,
-  ul,
-  ol,
-  dl,
-  dd {
-    margin: 0;
-    padding: 0;
-  }
-
-  ul,
-  ol {
-    list-style: none;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  button {
-    font: inherit;
-    color: inherit;
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  ::selection {
-    background: var(--accent);
-    color: var(--on-accent);
-  }
+[data-theme="ink"] {
+  --bg: var(--color-ink);
+  --fg: var(--color-paper);
+  --muted: #9a9a95;
+  --rule: rgb(240 239 235 / 0.16);
+  --accent: var(--color-blue-light);
 }
 
-/* Paper grain, used by the archived print led surfaces. */
-.grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 40;
-  opacity: 0.5;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+[data-theme="blue"] {
+  --bg: var(--color-blue);
+  --fg: var(--color-paper);
+  --muted: rgb(240 239 235 / 0.74);
+  --rule: rgb(240 239 235 / 0.28);
+  --accent: var(--color-paper);
 }
 
-@layer components {
-  /* The archived Contact page's cursor disc (/archive/v3). Hidden by CSS rather
-     than by state, and never on a touchscreen. */
-  .cursor-disc {
-    display: block;
-  }
+[data-theme] {
+  background-color: var(--bg);
+  color: var(--fg);
+}
 
-  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
-    .cursor-disc {
-      display: none;
-    }
-  }
+/* -------------------------------------------------------------------- base */
 
-  /* The scroll cue's line: a short segment that runs down its track. */
-  .scroll-cue-line::after {
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 420;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-blue);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+img,
+canvas,
+svg {
+  display: block;
+}
+
+/* -------------------------------------------------------------- typography */
+
+@utility t-xxl {
+  font-size: clamp(3rem, 11vw, 12rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  font-weight: 760;
+}
+
+@utility t-xl {
+  font-size: clamp(2.1rem, 5.2vw, 5.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 520;
+}
+
+@utility t-l {
+  font-size: clamp(1.6rem, 3vw, 3.1rem);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  font-weight: 520;
+}
+
+@utility t-m {
+  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+  line-height: 1.28;
+  letter-spacing: -0.012em;
+  font-weight: 460;
+}
+
+@utility t-body {
+  font-size: clamp(1rem, 1.05vw, 1.0625rem);
+  line-height: 1.55;
+}
+
+@utility t-small {
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+@utility t-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  font-weight: 420;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@utility numerals {
+  font-weight: 250;
+  font-stretch: 75%;
+  letter-spacing: -0.04em;
+  line-height: 0.8;
+}
+
+/* Keeps a small link's hit area near 40px without moving the layout. */
+@utility hit {
+  position: relative;
+  &::after {
     content: "";
     position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 45%;
-    background: currentColor;
-    animation: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    inset: -12px -8px;
   }
 }
 
-@keyframes scroll-cue {
-  0% {
-    transform: translateY(-100%);
+/* A serif phrase inside display type: a touch larger so its x-height matches
+   the sans, and no taller line box. */
+.t-xxl .serif,
+.t-xl .serif,
+.t-l .serif {
+  font-size: 1.07em;
+  line-height: 0;
+}
+
+@utility px-pad {
+  padding-inline: var(--pad);
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* An underline that draws in from the left on hover. */
+.link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-out-quint);
+}
+.link-line:hover,
+.link-line:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.site-header {
+  color: var(--color-ink);
+  transition:
+    transform 0.7s var(--ease-out-quint),
+    color 0.3s ease,
+    background-color 0.3s ease;
+}
+.site-header[data-scrolled="true"] {
+  background-color: var(--color-paper);
+}
+.site-header[data-scrolled="true"][data-on="ink"] {
+  background-color: var(--color-ink);
+}
+.site-header[data-scrolled="true"][data-on="blue"] {
+  background-color: var(--color-blue);
+}
+.site-header[data-on="ink"],
+.site-header[data-on="blue"] {
+  color: var(--color-paper);
+}
+.site-header[data-hidden="true"]:not(:focus-within) {
+  transform: translateY(-110%);
+}
+.site-header .wordmark {
+  transition:
+    opacity 0.5s ease,
+    translate 0.7s var(--ease-out-quint),
+    visibility 0s;
+}
+.site-header[data-mark="hide"] .wordmark {
+  opacity: 0;
+  translate: 0 -8px;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    translate 0.5s var(--ease-out-quint),
+    visibility 0s 0.3s;
+}
+
+/* -------------------------------------------------------------------- hero */
+
+/* The canvas starts at the proportions the name will have, so nothing below it
+   moves when the font arrives and the stripes are drawn. */
+.hero-name canvas {
+  aspect-ratio: 1360 / 567;
+}
+.hero-index {
+  margin-top: 24px;
+}
+/* YADAV is about 62% of the width, so the index fits in the rest. */
+@media (min-width: 1024px) {
+  .hero-index {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: min(420px, calc(38% - 32px));
+    margin-top: 0;
   }
-  70%,
-  100% {
-    transform: translateY(230%);
+  .hero-index ol li:last-child {
+    border-bottom: 0;
   }
 }
 
-@layer components {
-  /* Creative work. The letters of Photography are a window onto one of his
-     photographs: the word is filled with the picture and clipped to the
-     letterforms, and the pale wash the component lays over the image lifts the
-     darker frames enough to read the word. */
-  .photo-fill {
-    background-size: cover;
-    background-position: center;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+/* --------------------------------------------------------------- statement */
 
-  /* The same idea for graphic design, which has nothing to show yet: hatching
-     instead of a photograph, shifting when you point at it. When there are files
-     to show, the word can be filled with them the same way. */
-  .hatch-fill {
-    background-image: repeating-linear-gradient(135deg, var(--ink) 0 2px, transparent 2px 9px);
-    background-size: 200% 200%;
-    background-position: 0% 0%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    transition: background-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .group:hover .hatch-fill {
-    background-position: 28% 0%;
-  }
-
-  /* Where a background cannot be clipped to text, the words simply take the ink. */
-  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-    .photo-fill,
-    .hatch-fill {
-      background-image: none !important;
-      color: var(--ink);
-    }
-  }
+/* Each word ramps from grey to ink over six words' worth of scroll, starting
+   a little after the word before it. --p comes from the scroll loop. */
+.statement .word {
+  opacity: clamp(0.16, calc((var(--p, 0) * (var(--n) + 8) - var(--i)) / 8), 1);
 }
-
-/* A short fade and rise, for panels and results that appear in place. */
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
+@media (prefers-reduced-motion: reduce) {
+  .statement .word {
     opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------------- work track */
+
+/* Phones and tablets: a swipeable strip. */
+.work-track {
+  padding-block: clamp(72px, 12vh, 140px);
+}
+.work-rail {
+  display: flex;
+  gap: var(--gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--pad);
+  padding-inline: var(--pad);
+  scrollbar-width: none;
+}
+.work-rail::-webkit-scrollbar {
+  display: none;
+}
+.work-intro {
+  display: none;
+}
+.work-panel {
+  flex: none;
+  width: 86vw;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.work-num {
+  font-size: clamp(4.5rem, 16vw, 7rem);
+}
+.work-progress {
+  display: none;
+}
+
+/* Desktop: the rail is pinned and slides as the page scrolls. */
+@media (min-width: 1024px) {
+  .work-track {
+    --travel: 255;
+    padding-block: 0;
+    height: calc(var(--travel) * 1vw + 100svh);
+  }
+  .work-sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+  .work-rail {
+    height: 100%;
+    gap: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    width: max-content;
+    transform: translate3d(calc(var(--p, 0) * var(--travel) * -1cqw), 0, 0);
+    will-change: transform;
+  }
+  .work-intro {
+    flex: none;
+    width: 55cqw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 var(--pad) calc(var(--pad) + 48px);
+  }
+  .work-panel {
+    width: 100cqw;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+    padding: calc(var(--header) + 16px) var(--pad) calc(var(--pad) + 32px);
+  }
+  .work-media {
+    grid-column: 1 / span 7;
+  }
+  .work-media .outline-rule {
+    outline-color: rgb(240 239 235 / 0.3);
+  }
+  .work-text {
+    grid-column: 9 / span 4;
+  }
+  .work-num {
+    font-size: clamp(6rem, 11vw, 12.5rem);
+  }
+  .work-progress {
+    display: block;
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    bottom: var(--pad);
+    height: 1px;
+    background: var(--rule);
+  }
+  .work-progress span {
+    position: absolute;
+    inset: 0;
+    background: var(--fg);
+    transform-origin: 0 50%;
+    transform: scaleX(var(--p, 0));
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 760px) {
+  .work-summary {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- measured */
+
+.bar-muted {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--muted) 0 1.5px,
+    transparent 1.5px 6px
+  );
+  box-shadow: inset 0 0 0 1px var(--muted);
+}
+.unit-on {
+  background: var(--accent);
+}
+.unit-off {
+  box-shadow: inset 0 0 0 1px var(--muted);
+}
+
+/* Drawn once, when the row scrolls into view. */
+.measured-row .bar {
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 1.1s var(--ease-out-quint) calc(var(--k) * 110ms + 120ms);
+}
+.measured-row .bar-value {
+  opacity: 0;
+  translate: -6px 0;
+  transition:
+    opacity 0.5s ease calc(var(--k) * 110ms + 700ms),
+    translate 0.7s var(--ease-out-quint) calc(var(--k) * 110ms + 700ms);
+}
+.measured-row .unit {
+  opacity: 0.12;
+  scale: 0.6;
+  transition:
+    opacity 0.3s ease calc(var(--k) * 28ms + 150ms),
+    scale 0.5s var(--ease-out-quint) calc(var(--k) * 28ms + 150ms);
+}
+.measured-row[data-in="true"] .bar {
+  transform: scaleX(1);
+}
+.measured-row[data-in="true"] .bar-value {
+  opacity: 1;
+  translate: 0 0;
+}
+.measured-row[data-in="true"] .unit {
+  opacity: 1;
+  scale: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .measured-row .bar,
+  .measured-row .bar-value,
+  .measured-row .unit {
+    transform: none;
+    opacity: 1;
+    translate: none;
+    scale: none;
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------------------------- race */
+
+.race-ch {
+  position: relative;
+  opacity: 0.45;
+  white-space: pre-wrap;
+}
+.race-ch.is-typed {
+  opacity: 1;
+}
+.race-ch.is-caret::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0.14em;
+  bottom: 0.06em;
+  width: 2px;
+  background: currentColor;
+  animation: caret 1.05s steps(1) infinite;
+}
+/* His pace: a bar under the character he has reached. */
+.race-ch.is-ghost::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.04em;
+  height: 0.09em;
+  background: #ffe600;
+}
+.race-ch.is-miss {
+  opacity: 1;
+  background: rgb(255 230 0 / 0.4);
+}
+.race-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: #ffe600;
+}
+.race-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  font-size: 16px;
+  cursor: text;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* -------------------------------------------------------------------- lens */
+
+.lens-expand {
+  position: relative;
+  height: 260svh;
+}
+.lens-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding-inline: var(--pad);
+}
+.lens-line {
+  position: relative;
+  z-index: 1;
+  opacity: calc(1 - var(--e, 0) * 1.6);
+  scale: calc(1 - var(--e, 0) * 0.06);
+}
+.lens-slot {
+  display: inline-block;
+  width: 1.55em;
+  height: 0.8em;
+  vertical-align: -0.04em;
+}
+.lens-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  clip-path: inset(50% 50% 50% 50%);
+}
+
+/* Reduced motion: no pinning and no zoom, just the sentence and the photo. */
+@media (prefers-reduced-motion: reduce) {
+  .lens-expand {
+    height: auto;
+  }
+  .lens-stage {
+    position: relative;
+    height: auto;
+    display: block;
+    place-items: normal;
+    padding-block: clamp(88px, 14vh, 180px) 0;
+  }
+  .lens-line {
+    opacity: 1;
+    scale: none;
+  }
+  .lens-slot {
+    display: none;
+  }
+  .lens-frame {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    margin-top: clamp(40px, 7vh, 80px);
+    aspect-ratio: 16 / 9;
+    clip-path: none !important;
+    transform: none !important;
+  }
+}
+
+.collage {
+  position: relative;
+  height: clamp(880px, 150vh, 1500px);
+}
+.collage-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: min(92%, 46rem);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.collage-item {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: calc(var(--w) * 1vw);
+  overflow: hidden;
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--d) * 26px),
+    calc((0.5 - var(--p, 0.5)) * var(--d) * 300px + var(--my, 0) * var(--d) * 18px),
+    0
+  );
+}
+.collage-item img {
+  transition: transform 1.2s var(--ease-out-quint);
+}
+.collage-item:hover img,
+.collage-item:focus-visible img {
+  transform: scale(1.06);
+}
+@media (max-width: 767px) {
+  .collage {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .collage-title {
+    position: static;
+    grid-column: 1 / -1;
+    width: auto;
+    transform: none;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .collage-item {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    transform: translate3d(0, calc((0.5 - var(--p, 0.5)) * var(--d) * 70px), 0);
+  }
+  .collage-item:nth-of-type(even) {
+    margin-top: 48px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collage-item {
     transform: none;
   }
 }
 
-/* Page transitions. React's <ViewTransition> tags each page with one of these
-   classes. nav-forward and nav-back slide a short way in the direction of
-   travel; anything untyped, like the browser's own back button, just fades.
-   The nav is named site-nav and holds still over all of it. */
+/* ------------------------------------------------------------------ footer */
+
+.email-link {
+  --sx: 0;
+  --sy: 0;
+  text-shadow:
+    calc(var(--sx) * 7px) calc(var(--sy) * 3px) 0 rgb(0 160 233 / 0.9),
+    calc(var(--sx) * -5px) calc(var(--sy) * -2px) 0 rgb(228 0 127 / 0.85);
+  transition: text-shadow 0.4s var(--ease-out-quint);
+}
+.halftone canvas {
+  --dot: #3a3a37;
+  --dot-lit: #f0efeb;
+}
+
+/* ------------------------------------------------------------- photography */
+
+.photo-field {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.photo-field[data-dragging] {
+  cursor: grabbing;
+}
+.photo-tile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  cursor: inherit;
+  will-change: transform;
+}
+.photo-tile img {
+  transition:
+    transform 0.9s var(--ease-out-quint),
+    filter 0.5s ease;
+  -webkit-user-drag: none;
+}
+.photo-field:not([data-dragging]) .photo-tile:hover img,
+.photo-tile:focus-visible img {
+  transform: scale(1.05);
+}
+.photo-field:not([data-dragging]):has(.photo-tile:hover) .photo-tile:not(:hover) img {
+  filter: brightness(0.55);
+}
+/* Soft shade at the top and foot of the field so the header and the title
+   read over any photograph. */
+.photo-field::before,
+.photo-field::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.photo-field::before {
+  top: 0;
+  height: 132px;
+  background: linear-gradient(rgb(15 15 15 / 0.78), rgb(15 15 15 / 0));
+}
+.photo-field::after {
+  bottom: 0;
+  height: 260px;
+  background: linear-gradient(rgb(15 15 15 / 0), rgb(15 15 15 / 0.85));
+}
+.photo-title {
+  color: var(--color-paper);
+}
+.photo-hint {
+  transition: opacity 0.8s ease;
+}
+.photo-hint[data-quiet] {
+  opacity: 0;
+}
+
+.photo-viewer {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-paper);
+  --muted: #9a9a95;
+  --accent: var(--color-blue-light);
+}
+.photo-viewer::backdrop {
+  background: rgb(10 10 10 / 0.95);
+}
+.photo-viewer[open] {
+  animation: viewer-in 0.5s var(--ease-out-quint);
+}
+.viewer-img {
+  animation: viewer-img 0.6s var(--ease-out-quint);
+}
+@keyframes viewer-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes viewer-img {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+/* --------------------------------------------------------------- preloader */
+
+.preloader {
+  display: none;
+}
+html[data-intro="pending"] {
+  overflow: hidden;
+}
+html[data-intro="pending"] .preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--pad);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.95s var(--ease-in-out-quart);
+}
+.preloader-count {
+  font-size: clamp(7rem, 24vw, 24rem);
+  transition:
+    translate 0.8s var(--ease-in-out-quart),
+    opacity 0.5s ease;
+}
+html[data-intro="pending"] .preloader[data-state="leaving"] {
+  clip-path: inset(0 0 100% 0);
+}
+.preloader[data-state="leaving"] .preloader-count {
+  translate: 0 -40%;
+  opacity: 0;
+}
+
+/* -------------------------------------------------------- view transitions */
+
 ::view-transition {
   pointer-events: none;
 }
 
-::view-transition-old(.nav-forward),
-::view-transition-old(.nav-back) {
-  animation:
-    180ms cubic-bezier(0.4, 0, 1, 1) both vt-fade reverse,
-    440ms cubic-bezier(0.22, 1, 0.36, 1) both vt-slide reverse;
-}
-
-::view-transition-new(.nav-forward),
-::view-transition-new(.nav-back) {
-  animation:
-    300ms cubic-bezier(0, 0, 0.2, 1) 120ms both vt-fade,
-    440ms cubic-bezier(0.22, 1, 0.36, 1) both vt-slide;
-}
-
-::view-transition-old(.nav-forward) {
-  --vt-offset: -44px;
-}
-::view-transition-new(.nav-forward) {
-  --vt-offset: 44px;
-}
-::view-transition-old(.nav-back) {
-  --vt-offset: 44px;
-}
-::view-transition-new(.nav-back) {
-  --vt-offset: -44px;
-}
-
-::view-transition-old(.page-fade) {
-  animation: 160ms cubic-bezier(0.4, 0, 1, 1) both vt-fade reverse;
-}
-
-::view-transition-new(.page-fade) {
-  animation: 280ms cubic-bezier(0, 0, 0.2, 1) 100ms both vt-fade;
-}
-
-::view-transition-group(.morph) {
-  animation-duration: 560ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-::view-transition-image-pair(.morph) {
-  animation-name: vt-via-blur;
-}
-
-::view-transition-group(site-nav) {
+::view-transition-group(site-header) {
   animation: none;
   z-index: 100;
 }
-
-::view-transition-old(site-nav) {
+::view-transition-old(site-header) {
   display: none;
 }
-
-::view-transition-new(site-nav) {
+::view-transition-new(site-header) {
   animation: none;
 }
 
-@keyframes vt-fade {
+::view-transition-group(.morph) {
+  animation-duration: 700ms;
+  animation-timing-function: var(--ease-in-out-quart);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  40% {
+    filter: blur(4px);
+  }
+}
+
+::view-transition-old(.nav-forward) {
+  --slide: -80px;
+  animation:
+    220ms ease-in both fade reverse,
+    600ms var(--ease-in-out-quart) both slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide: 80px;
+  animation:
+    380ms ease-out 180ms both fade,
+    600ms var(--ease-in-out-quart) both slide;
+}
+::view-transition-old(.nav-back) {
+  --slide: 80px;
+  animation:
+    220ms ease-in both fade reverse,
+    600ms var(--ease-in-out-quart) both slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide: -80px;
+  animation:
+    380ms ease-out 180ms both fade,
+    600ms var(--ease-in-out-quart) both slide;
+}
+
+@keyframes fade {
   from {
     opacity: 0;
   }
@@ -429,34 +856,19 @@
     opacity: 1;
   }
 }
-
-@keyframes vt-slide {
+@keyframes slide {
   from {
-    translate: var(--vt-offset) 0;
+    translate: var(--slide) 0;
   }
   to {
     translate: 0 0;
   }
 }
 
-@keyframes vt-via-blur {
-  30% {
-    filter: blur(3px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-
-  ::view-transition-group(*),
   ::view-transition-old(*),
-  ::view-transition-new(*) {
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
   }
