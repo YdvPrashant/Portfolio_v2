@@ -1,9 +1,9 @@
-import { CvSheet } from "@/components/home/CvSheet";
 import { Hero } from "@/components/home/Hero";
 import { Lens } from "@/components/home/Lens";
 import { Measured } from "@/components/home/Measured";
 import { Preloader } from "@/components/home/Preloader";
 import { Statement } from "@/components/home/Statement";
+import { StickerWall } from "@/components/home/StickerWall";
 import { TypeRace } from "@/components/home/TypeRace";
 import { WorkTrack } from "@/components/home/WorkTrack";
 import { Footer } from "@/components/site/Footer";
@@ -23,7 +23,7 @@ export default async function Home() {
         <Measured />
         <TypeRace />
         <Lens photos={photos} />
-        <CvSheet />
+        <StickerWall />
       </main>
       <Footer />
     </PageTransition>

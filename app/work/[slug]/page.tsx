@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BenchmarkRow } from "@/components/home/Measured";
+import { BenchmarkRow } from "@/components/work/BenchmarkRow";
 import { Footer } from "@/components/site/Footer";
 import { PageTransition } from "@/components/site/PageTransition";
 import { NextProject } from "@/components/work/NextProject";

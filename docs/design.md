@@ -24,11 +24,11 @@ tied motion rather than timed motion, and very few colours.
 | Serif italic words inside grotesk statements | Artiom Yakushev, Lando Norris (Site of the Year) | Mixed families to weight a few words |
 | Words that turn from grey to ink as you scroll | Artiom Yakushev, Elliott Mangham, Cerebrium | Scroll scrubbed reading |
 | Work that slides sideways as you scroll, with large numerals | Gianluca Gradogna, Boc.Studio, Lama Lama | Numbered index, slide rather than stack |
-| Benchmark bars and unit charts | Cerebrium (Site of the Day) | Comparison bars in place of adjectives |
+| Measured on one screen: giant condensed numbers that roll like an odometer, the old figures struck through with a proofreader's pen, and pointing at a number rolls it back to where it started | Lando Norris (Site of the Year) stats pages | Huge numerals with small labels and hand-drawn marks. It replaced bar charts after Cerebrium, which ran to several screens and read as bland; the bars stay on the case studies |
 | A photograph set into a sentence that grows to fill the screen | Gianluca Gradogna ("Through this lens") | Image in text |
 | Photographs scattered at several depths around their heading | Lando Norris, Floema, Getty's Tracing Art | Loose scatter with parallax |
 | An endless field of photographs you drag around | Gionatan Nese, Getty's Tracing Art | Drag to explore |
-| The CV as a mono data sheet | Elliott Mangham, Gil Huybrecht | Dense information columns |
+| The CV as a sheet of stickers printed flat in the site's own inks: a blue university seal, a yellow burst for 1600+, a keycap drawn in line for 74.8 wpm, a cyan Lucknow postage stamp, PRISM in the name's misregistered stripes, and the stack as one-colour die-cut logos. They slap on when seen; point to lift one, drag it anywhere | WC26 Unofficial Player Album (Honorable Mention 2026), Dave Holloway (Honorable Mention), Lando Norris | Die-cut stickers as collectable objects; information you can pick up; a loose collage. It replaced a mono data sheet (bland) and a split-flap board, which he turned down. The first sticker version, with brand colours, gradients and holographic foil, was redone flat because it did not match the rest of the site |
 | The name in halftone dots at the foot of every page | Opal Tadpole (Site of the Year), Lama Lama | Dot matrix wordmark |
 | A counter that runs to 100 before the first view | Gianluca Gradogna, Olha Lazarieva, Gil Huybrecht | Big numerals in the corner |
 | A different ground for each section | Lando Norris | Paper, ink and one blue field in rhythm |

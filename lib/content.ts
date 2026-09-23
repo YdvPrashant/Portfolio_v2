@@ -286,7 +286,60 @@ export const benchmarks: Benchmark[] = [
   },
 ];
 
-/* The CV, as the data sheet near the foot of the home page. */
+/* The Measured section on the home page: four figures set huge, and a line
+   of smaller ones. `before` is where a figure started, struck through and
+   shown again when you point at it. `mark` rings or underlines one word of
+   the caption, as a proofreader would. Every value is from the resume. */
+export type Figure = {
+  value: string;
+  unit?: string;
+  before?: string;
+  label: string;
+  slug: string;
+  mark?: { word: string; kind: "ring" | "underline" };
+};
+
+export const figures: { lead: Figure[]; more: { value: string; label: string }[] } = {
+  lead: [
+    {
+      value: "104",
+      unit: "ms",
+      before: "228",
+      label: "per frame on CPU, once the heavy stages waited behind a cheap one",
+      slug: "conflict-detection",
+    },
+    {
+      value: "93.3",
+      unit: "%",
+      label: "of fact checks correct, and none of them wrong",
+      slug: "prism",
+      mark: { word: "none", kind: "ring" },
+    },
+    {
+      value: "100",
+      unit: "/s",
+      label: "images embedded a second, fully offline",
+      slug: "ctximg",
+      mark: { word: "offline", kind: "underline" },
+    },
+    {
+      value: "74.8",
+      unit: "%",
+      before: "98.4",
+      label: "per video, on 519 videos the model never saw. The 98.4 came from a leaky split",
+      slug: "conflict-detection",
+    },
+  ],
+  more: [
+    { value: "18/18", label: "concurrent analyses at HTTP 200" },
+    { value: "26 ms", label: "per frame on GPU, 38.4 FPS" },
+    { value: "0.808", label: "PR-AUC on held out videos" },
+    { value: "0.023", label: "calibration error, from 0.065" },
+    { value: "203", label: "tests, green in 13 seconds" },
+  ],
+};
+
+/* The CV facts, used by the sticker wall and written out for screen readers. */
 export const cv = {
   education: {
     school: "Lovely Professional University",

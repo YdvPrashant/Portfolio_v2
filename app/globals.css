@@ -459,6 +459,130 @@ svg {
   }
 }
 
+/* Measured, on one screen: numbers that roll, and a proofreader's pen. */
+.measure {
+  position: relative;
+  padding: clamp(18px, 3.2vh, 34px) clamp(10px, 1.5vw, 22px) clamp(22px, 4vh, 40px) 0;
+  border-bottom: 1px solid var(--rule);
+  outline-offset: -3px;
+}
+.measure:nth-child(even) {
+  padding-left: clamp(12px, 1.6vw, 24px);
+  border-left: 1px solid var(--rule);
+}
+@media (min-width: 1024px) {
+  .measure:nth-child(n + 2) {
+    padding-left: clamp(12px, 1.6vw, 24px);
+    border-left: 1px solid var(--rule);
+  }
+  .measure {
+    border-bottom: 0;
+  }
+}
+.measure-before {
+  min-height: 1.6em;
+  color: var(--muted);
+}
+.measure-figure {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 0.12em;
+  font-weight: 760;
+  font-stretch: 75%;
+  font-size: clamp(4.2rem, 9.4vw, 10.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  transition: color 0.4s ease;
+}
+.measure[data-back] .measure-figure {
+  color: #e4007f;
+}
+.measure-unit {
+  margin: 0 0 0.12em 0.08em;
+  font-size: 0.32em;
+  font-stretch: 100%;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+.odo {
+  display: inline-flex;
+}
+.odo-col,
+.odo-char {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+}
+.odo-col {
+  overflow: hidden;
+}
+.odo-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--n) * -1em));
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms);
+}
+.odo-strip > span {
+  display: block;
+  height: 1em;
+  text-align: center;
+}
+.measure[data-back] .odo-strip {
+  transition-duration: 0.75s;
+}
+
+.pen-word {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+.pen {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: #e4007f;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pen path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1.2s;
+}
+/* Hidden only once the page knows it will draw them in. */
+.measured[data-armed]:not([data-seen]) .pen path {
+  stroke-dashoffset: 1;
+  transition: none;
+}
+.pen-strike {
+  left: -6%;
+  top: -5%;
+  width: 112%;
+  height: 110%;
+}
+.pen-ring {
+  left: -20%;
+  top: -40%;
+  width: 140%;
+  height: 180%;
+  stroke-width: 3;
+}
+.pen-underline {
+  left: -3%;
+  top: 45%;
+  width: 106%;
+  height: 80%;
+  stroke-width: 3;
+}
+@media (prefers-reduced-motion: reduce) {
+  .odo-strip,
+  .pen path {
+    transition: none;
+  }
+}
+
 /* -------------------------------------------------------------------- race */
 
 .race-ch {
@@ -642,6 +766,234 @@ svg {
   .collage-item {
     transform: none;
   }
+}
+
+/* ---------------------------------------------------------------- stickers */
+
+/* The stickers sit on the page itself. The region only sets how much room the
+   collage has: tall on a phone, wide above. */
+.lid {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 0.48;
+  touch-action: pan-y;
+}
+@media (min-width: 768px) {
+  .lid {
+    aspect-ratio: 1.85;
+  }
+}
+
+.sticker {
+  --x: var(--tx);
+  --y: var(--ty);
+  --r: var(--tr);
+  --sw: calc(var(--tw) * 1cqw);
+  --h: calc(var(--th, var(--tw)) * 1cqw);
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--sw);
+  height: var(--h);
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--r) * var(--rk, 1))) scale(var(--s, 1));
+  transition:
+    transform 0.4s var(--ease-out-quint),
+    filter 0.4s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+@media (min-width: 768px) {
+  .sticker {
+    --x: var(--wx);
+    --y: var(--wy);
+    --r: var(--wr);
+    --sw: calc(var(--ww) * 1cqw);
+    --h: calc(var(--wh, var(--ww)) * 1cqw);
+  }
+}
+.sticker-word {
+  width: auto;
+  height: auto;
+  font-size: 2.9cqw;
+}
+@media (min-width: 768px) {
+  .sticker-word {
+    font-size: 1.12cqw;
+  }
+}
+
+/* Printed flat on the page. Lifting one is the only time it casts a shadow. */
+@media (hover: hover) {
+  .sticker:hover {
+    --s: 1.06;
+    --rk: 0.45;
+    filter: drop-shadow(0 12px 16px rgb(15 15 15 / 0.16));
+  }
+}
+.sticker[data-held="true"],
+.sticker[data-lift="true"] {
+  --s: 1.1;
+  --rk: 0.3;
+  cursor: grabbing;
+  filter: drop-shadow(0 22px 26px rgb(15 15 15 / 0.2));
+}
+.sticker[data-held="true"] {
+  transition:
+    transform 0.09s linear,
+    filter 0.3s ease;
+}
+
+/* Stuck on one after another the first time the collage is seen. */
+@media (scripting: enabled) {
+  .lid[data-in="false"] .sticker {
+    opacity: 0;
+  }
+}
+.lid[data-in="true"] .sticker {
+  animation: slap 0.6s var(--ease-out-quint) both;
+  animation-delay: calc(var(--i) * 26ms);
+}
+@keyframes slap {
+  from {
+    opacity: 0;
+    transform: translate(0, -14px) rotate(calc(var(--r) + 16deg)) scale(1.5);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lid .sticker {
+    animation: none !important;
+    opacity: 1 !important;
+    transition: none;
+  }
+}
+
+/* The white die-cut edge, and outside it the thin black cut line. */
+.die {
+  --edge: max(0.4cqw, 3px);
+  position: relative;
+  box-shadow:
+    0 0 0 var(--edge) #fbfbf8,
+    0 0 0 calc(var(--edge) + 1px) rgb(15 15 15 / 0.9);
+}
+
+.sticker-text {
+  font-family: var(--font-mona);
+  line-height: 0.92;
+}
+.st-num {
+  font-weight: 820;
+  font-stretch: 75%;
+  letter-spacing: -0.02em;
+  font-size: calc(var(--sw) * 0.3);
+}
+.st-word {
+  font-weight: 820;
+  font-stretch: 75%;
+  letter-spacing: -0.01em;
+  font-size: calc(var(--sw) * 0.2);
+}
+.st-line {
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  font-size: calc(var(--sw) * 0.066);
+}
+.st-xs {
+  font-family: var(--font-mono);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  font-size: calc(var(--sw) * 0.05);
+}
+.st-mono {
+  font-family: var(--font-mono);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  padding: 0.6em 1em;
+}
+.sticker[data-fact="holo"] .st-num {
+  font-size: calc(var(--sw) * 0.22);
+  margin-block: 0.12em;
+}
+.sticker[data-fact="holo"] .st-xs {
+  font-size: calc(var(--sw) * 0.062);
+}
+.sticker[data-fact="prism"] .st-xs {
+  font-size: calc(var(--sw) * 0.042);
+  white-space: nowrap;
+}
+.sticker[data-fact="pill"] .st-line {
+  font-size: calc(var(--sw) * 0.05);
+  margin-bottom: 0.25em;
+}
+.sticker[data-fact="pill"] .st-xs {
+  font-size: calc(var(--sw) * 0.031);
+}
+.live-dot {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  background: #2b2bff;
+}
+
+/* PRISM in the name's treatment: three process inks in stripes, printed a
+   hair out of register, pulling further apart when the sticker is lifted. */
+.misreg {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+.mr {
+  display: block;
+  mix-blend-mode: multiply;
+  -webkit-mask: repeating-linear-gradient(to bottom, #000 0 0.052em, transparent 0.052em 0.08em);
+  mask: repeating-linear-gradient(to bottom, #000 0 0.052em, transparent 0.052em 0.08em);
+  transition: translate 0.6s var(--ease-out-quint);
+}
+.mr + .mr {
+  position: absolute;
+  inset: 0;
+}
+.mr-c {
+  color: #00a0e9;
+  translate: var(--mis, 0.018em) 0;
+}
+.mr-m {
+  color: #e4007f;
+  translate: calc(var(--mis, 0.018em) * -0.6) 0;
+}
+.mr-y {
+  color: #ffe600;
+  translate: calc(var(--mis, 0.018em) * 0.3) 0;
+}
+.sticker:hover .misreg,
+.sticker[data-held="true"] .misreg,
+.sticker[data-lift="true"] .misreg {
+  --mis: 0.09em;
+}
+
+/* A postage stamp: perforated white paper round a printed panel. */
+.stamp {
+  --t: max(1.15cqw, 8px);
+  padding: calc(var(--t) * 0.62);
+  background: #fbfbf8;
+  -webkit-mask:
+    radial-gradient(circle calc(var(--t) * 0.3) at center, #0000 98%, #000) calc(var(--t) / -2)
+      calc(var(--t) / -2) / var(--t) var(--t) round,
+    linear-gradient(#000 0 0) content-box;
+  mask:
+    radial-gradient(circle calc(var(--t) * 0.3) at center, #0000 98%, #000) calc(var(--t) / -2)
+      calc(var(--t) / -2) / var(--t) var(--t) round,
+    linear-gradient(#000 0 0) content-box;
 }
 
 /* ------------------------------------------------------------------ footer */
