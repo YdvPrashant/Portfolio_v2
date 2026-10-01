@@ -50,7 +50,9 @@ the poster was picked, then given one of his photographs inside the letters.
 
 The striped CMY name and the counter that ran to 100 before the first view
 were taken out. The photograph drifts a little against the pointer and lags
-behind the scroll; nothing else moves.
+behind the scroll; nothing else moves. It sits raised (50px on a 1440 wide
+window, scaled with the name elsewhere) so the snowy ridge shows in the second
+line.
 
 ## Additions, 2026-10-01
 

@@ -321,9 +321,12 @@ svg {
   background-repeat: no-repeat;
   /* a little wider than the name, so the drift never shows an edge */
   background-size: calc(100% + 48px) auto;
+  /* Raised by 0.1334em, which is 50px on a 1440 by 900 window (his pick),
+     so the ridge climbs into "yadav" by the same share of the name on any
+     screen. */
   background-position:
     calc(50% + var(--dx) * 1px)
-    calc(42% + (var(--dy) + var(--sy)) * 1px);
+    calc(42% + (var(--dy) + var(--sy)) * 1px - 0.1334em);
   -webkit-background-clip: text;
   background-clip: text;
   transition:
