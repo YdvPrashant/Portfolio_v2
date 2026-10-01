@@ -923,232 +923,197 @@ svg {
   }
 }
 
-/* ---------------------------------------------------------------- stickers */
+/* ------------------------------------------------------------------ skills */
 
-/* The stickers sit on the page itself. The region only sets how much room the
-   collage has: tall on a phone, wide above. */
-.lid {
+/* Web on the left, machine learning on the right, the projects between them.
+   SkillThreads draws the lines into the svg from wherever the words land, so
+   this layout is the whole design and the lines follow it. */
+.threads {
   position: relative;
-  container-type: inline-size;
-  aspect-ratio: 0.48;
-  touch-action: pan-y;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-top: clamp(56px, 9vh, 112px);
 }
-@media (min-width: 768px) {
-  .lid {
-    aspect-ratio: 1.85;
-  }
-}
-
-.sticker {
-  --x: var(--tx);
-  --y: var(--ty);
-  --r: var(--tr);
-  --sw: calc(var(--tw) * 1cqw);
-  --h: calc(var(--th, var(--tw)) * 1cqw);
+.threads-svg {
   position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--sw);
-  height: var(--h);
-  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--r) * var(--rk, 1))) scale(var(--s, 1));
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.threads-svg path {
+  fill: none;
+  stroke: var(--fg);
+  stroke-opacity: 0.24;
+  stroke-width: 1;
+  stroke-linecap: round;
+  /* with pathLength 1, the dash offset runs from 1 (not drawn) to 0 */
+  stroke-dasharray: 1;
   transition:
-    transform 0.4s var(--ease-out-quint),
-    filter 0.4s ease;
-  cursor: grab;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: pan-y;
+    stroke 0.35s ease,
+    stroke-opacity 0.35s ease,
+    stroke-width 0.35s ease;
 }
-@media (min-width: 768px) {
-  .sticker {
-    --x: var(--wx);
-    --y: var(--wy);
-    --r: var(--wr);
-    --sw: calc(var(--ww) * 1cqw);
-    --h: calc(var(--wh, var(--ww)) * 1cqw);
+.threads-svg circle {
+  fill: var(--fg);
+  opacity: var(--drawn, 1);
+  transition:
+    fill 0.35s ease,
+    opacity 0.35s ease;
+}
+.threads-web {
+  grid-column: 1 / 4;
+  grid-row: 1;
+  text-align: right;
+}
+.threads-ml {
+  grid-column: 10 / 13;
+  grid-row: 1;
+}
+.threads-label {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--muted);
+}
+.threads-skill {
+  font-size: clamp(1rem, 1.45vw, 1.4rem);
+  line-height: 1.62;
+  letter-spacing: -0.012em;
+  font-weight: 460;
+  /* faint until its line reaches it */
+  opacity: calc(0.16 + 0.84 * var(--drawn, 1));
+  transition: opacity 0.35s ease;
+}
+.threads-projects {
+  grid-column: 6 / 8;
+  grid-row: 1;
+  margin-inline: -30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+.threads-project {
+  padding: 10px 6px;
+  cursor: pointer;
+  transition:
+    opacity 0.35s ease,
+    color 0.35s ease;
+}
+.threads-project .num {
+  display: block;
+  margin-bottom: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted);
+}
+.threads-project .nm {
+  display: block;
+  font-size: clamp(1.15rem, 1.75vw, 1.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.threads-cpp {
+  grid-column: 5 / 9;
+  grid-row: 2;
+  margin-top: 30px;
+  text-align: center;
+}
+.threads-cpp p {
+  transition: opacity 0.35s ease;
+}
+
+/* Pointing: one project's lines, or one skill's, in the accent; the rest
+   step back. */
+.threads[data-on] .threads-svg path {
+  stroke-opacity: 0.05;
+}
+.threads[data-on] .threads-svg path[data-lit] {
+  stroke: var(--accent);
+  stroke-opacity: 1;
+  stroke-width: 1.6;
+}
+.threads[data-on] .threads-svg circle {
+  opacity: 0.25;
+}
+.threads[data-on] .threads-svg circle[data-lit] {
+  opacity: 1;
+  fill: var(--accent);
+}
+.threads[data-on] .threads-skill:not([data-lit]) {
+  opacity: 0.26;
+}
+.threads[data-on] .threads-project:not([data-lit]) {
+  opacity: 0.3;
+}
+.threads[data-on] .threads-project[data-lit] {
+  color: var(--accent);
+}
+/* DSA's two figures step back with C++ */
+.threads[data-on] .threads-cpp:not(:has([data-lit])) p {
+  opacity: 0.3;
+}
+
+/* A phone has room for one side: the projects down the left, every skill to
+   their right, the lines between. */
+@media (max-width: 639px) {
+  .threads {
+    grid-template-columns: 34% 1fr 46%;
+    column-gap: 0;
+    margin-top: 44px;
   }
-}
-.sticker-word {
-  width: auto;
-  height: auto;
-  font-size: 2.9cqw;
-}
-@media (min-width: 768px) {
-  .sticker-word {
-    font-size: 1.12cqw;
+  .threads-projects {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    margin: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .threads-project {
+    padding: 8px 0;
+    text-align: left;
+  }
+  .threads-project .nm {
+    font-size: 15px;
+    letter-spacing: -0.015em;
+  }
+  .threads-web {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: left;
+  }
+  .threads-ml {
+    grid-column: 3;
+    grid-row: 2;
+    margin-top: 22px;
+  }
+  .threads-cpp {
+    grid-column: 3;
+    grid-row: 3;
+    margin-top: 22px;
+    text-align: left;
+  }
+  .threads-skill {
+    font-size: 14.5px;
+  }
+  .threads-label {
+    margin-bottom: 6px;
+    font-size: 10.5px;
   }
 }
 
-/* Printed flat on the page. Lifting one is the only time it casts a shadow. */
-@media (hover: hover) {
-  .sticker:hover {
-    --s: 1.06;
-    --rk: 0.45;
-    filter: drop-shadow(0 12px 16px rgb(15 15 15 / 0.16));
-  }
-}
-.sticker[data-held="true"],
-.sticker[data-lift="true"] {
-  --s: 1.1;
-  --rk: 0.3;
-  cursor: grabbing;
-  filter: drop-shadow(0 22px 26px rgb(15 15 15 / 0.2));
-}
-.sticker[data-held="true"] {
-  transition:
-    transform 0.09s linear,
-    filter 0.3s ease;
-}
-
-/* Stuck on one after another the first time the collage is seen. */
-@media (scripting: enabled) {
-  .lid[data-in="false"] .sticker {
-    opacity: 0;
-  }
-}
-.lid[data-in="true"] .sticker {
-  animation: slap 0.6s var(--ease-out-quint) both;
-  animation-delay: calc(var(--i) * 26ms);
-}
-@keyframes slap {
-  from {
-    opacity: 0;
-    transform: translate(0, -14px) rotate(calc(var(--r) + 16deg)) scale(1.5);
-  }
-  45% {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .lid .sticker {
-    animation: none !important;
-    opacity: 1 !important;
+  .threads-svg path,
+  .threads-svg circle,
+  .threads-skill,
+  .threads-project {
     transition: none;
   }
-}
-
-/* The white die-cut edge, and outside it the thin black cut line. */
-.die {
-  --edge: max(0.4cqw, 3px);
-  position: relative;
-  box-shadow:
-    0 0 0 var(--edge) #fbfbf8,
-    0 0 0 calc(var(--edge) + 1px) rgb(15 15 15 / 0.9);
-}
-
-.sticker-text {
-  font-family: var(--font-mona);
-  line-height: 0.92;
-}
-.st-num {
-  font-weight: 820;
-  font-stretch: 75%;
-  letter-spacing: -0.02em;
-  font-size: calc(var(--sw) * 0.3);
-}
-.st-word {
-  font-weight: 820;
-  font-stretch: 75%;
-  letter-spacing: -0.01em;
-  font-size: calc(var(--sw) * 0.2);
-}
-.st-line {
-  font-weight: 720;
-  letter-spacing: -0.01em;
-  font-size: calc(var(--sw) * 0.066);
-}
-.st-xs {
-  font-family: var(--font-mono);
-  font-weight: 620;
-  letter-spacing: 0.02em;
-  line-height: 1.15;
-  font-size: calc(var(--sw) * 0.05);
-}
-.st-mono {
-  font-family: var(--font-mono);
-  font-weight: 650;
-  letter-spacing: 0.01em;
-  line-height: 1;
-  padding: 0.6em 1em;
-}
-.sticker[data-fact="holo"] .st-num {
-  font-size: calc(var(--sw) * 0.22);
-  margin-block: 0.12em;
-}
-.sticker[data-fact="holo"] .st-xs {
-  font-size: calc(var(--sw) * 0.062);
-}
-.sticker[data-fact="prism"] .st-xs {
-  font-size: calc(var(--sw) * 0.042);
-  white-space: nowrap;
-}
-.sticker[data-fact="pill"] .st-line {
-  font-size: calc(var(--sw) * 0.05);
-  margin-bottom: 0.25em;
-}
-.sticker[data-fact="pill"] .st-xs {
-  font-size: calc(var(--sw) * 0.031);
-}
-.live-dot {
-  display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  border-radius: 50%;
-  background: #2b2bff;
-}
-
-/* PRISM in three process inks in stripes, printed a hair out of register,
-   pulling further apart when the sticker is lifted. */
-.misreg {
-  position: relative;
-  display: inline-block;
-  isolation: isolate;
-}
-.mr {
-  display: block;
-  mix-blend-mode: multiply;
-  -webkit-mask: repeating-linear-gradient(to bottom, #000 0 0.052em, transparent 0.052em 0.08em);
-  mask: repeating-linear-gradient(to bottom, #000 0 0.052em, transparent 0.052em 0.08em);
-  transition: translate 0.6s var(--ease-out-quint);
-}
-.mr + .mr {
-  position: absolute;
-  inset: 0;
-}
-.mr-c {
-  color: #00a0e9;
-  translate: var(--mis, 0.018em) 0;
-}
-.mr-m {
-  color: #e4007f;
-  translate: calc(var(--mis, 0.018em) * -0.6) 0;
-}
-.mr-y {
-  color: #ffe600;
-  translate: calc(var(--mis, 0.018em) * 0.3) 0;
-}
-.sticker:hover .misreg,
-.sticker[data-held="true"] .misreg,
-.sticker[data-lift="true"] .misreg {
-  --mis: 0.09em;
-}
-
-/* A postage stamp: perforated white paper round a printed panel. */
-.stamp {
-  --t: max(1.15cqw, 8px);
-  padding: calc(var(--t) * 0.62);
-  background: #fbfbf8;
-  -webkit-mask:
-    radial-gradient(circle calc(var(--t) * 0.3) at center, #0000 98%, #000) calc(var(--t) / -2)
-      calc(var(--t) / -2) / var(--t) var(--t) round,
-    linear-gradient(#000 0 0) content-box;
-  mask:
-    radial-gradient(circle calc(var(--t) * 0.3) at center, #0000 98%, #000) calc(var(--t) / -2)
-      calc(var(--t) / -2) / var(--t) var(--t) round,
-    linear-gradient(#000 0 0) content-box;
 }
 
 /* ------------------------------------------------------------------ footer */

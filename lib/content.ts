@@ -344,37 +344,54 @@ export const figures: { lead: Figure[]; more: { value: string; label: string }[]
   ],
 };
 
-/* The CV facts, used by the sticker wall and written out for screen readers. */
-export const cv = {
-  education: {
-    school: "Lovely Professional University",
-    degree: "B.Tech, Computer Science Engineering",
-    place: "Phagwara, Punjab",
-    graduated: "Graduated July 2025",
-    coursework: "Data structures and algorithms, operating systems, database management systems",
-  },
-  stack: [
-    { label: "Languages", items: "C++, Python, JavaScript, TypeScript, SQL" },
-    { label: "Frontend", items: "React, Next.js, Tailwind CSS, HTML, CSS" },
-    {
-      label: "Backend and data",
-      items: "Node.js, Express, FastAPI, REST APIs, JWT auth, MongoDB, MySQL, SQLite",
-    },
-    {
-      label: "AI and ML",
-      items: "PyTorch, OpenCV, CLIP embeddings, computer vision, RAG, Gemini, Groq",
-    },
-    { label: "Tools", items: "Git, GitHub, Docker, Vercel, Postman, Linux" },
-  ],
-  problems: [
-    { value: "700+", label: "problems solved across platforms" },
-    { value: "300+", label: "of them on LeetCode" },
-    { value: "1600+", label: "LeetCode contest rating" },
-  ],
-  volunteer: {
-    role: "Web developer, Aurora",
-    note: "Built and maintained the website of Aurora, a student organisation at LPU, for a year as a volunteer.",
-  },
+/* The skills section. Each skill names the projects it was used in, by slug,
+   with "dsa" for competitive programming. Prashant corrected these on
+   2026-10-01; REST APIs on ctximg comes from its 19 endpoints in the resume.
+   `side` puts a skill on the web half or the machine learning half, and the
+   order within a side keeps the lines from crossing more than they need to:
+   Prism's skills at the top, ctximg's at the foot. */
+export type Skill = { name: string; side: "web" | "ml" | "dsa"; usedIn: string[] };
+
+export const skills: Skill[] = [
+  { name: "Next.js", side: "web", usedIn: ["prism"] },
+  { name: "React", side: "web", usedIn: ["prism"] },
+  { name: "TypeScript", side: "web", usedIn: ["prism"] },
+  { name: "Tailwind CSS", side: "web", usedIn: ["prism"] },
+  { name: "Node.js", side: "web", usedIn: ["prism"] },
+  { name: "Vercel", side: "web", usedIn: ["prism"] },
+  { name: "HTML and CSS", side: "web", usedIn: ["prism", "ctximg"] },
+  { name: "REST APIs", side: "web", usedIn: ["prism", "ctximg"] },
+  { name: "JavaScript", side: "web", usedIn: ["prism", "conflict-detection", "ctximg"] },
+  { name: "Git and GitHub", side: "web", usedIn: ["prism", "conflict-detection", "ctximg"] },
+  { name: "FastAPI", side: "web", usedIn: ["ctximg"] },
+  { name: "SQLite", side: "web", usedIn: ["ctximg"] },
+  { name: "RAG", side: "ml", usedIn: ["prism"] },
+  { name: "Gemini", side: "ml", usedIn: ["prism"] },
+  { name: "Groq", side: "ml", usedIn: ["prism"] },
+  { name: "CUDA", side: "ml", usedIn: ["conflict-detection"] },
+  { name: "OpenCV", side: "ml", usedIn: ["conflict-detection"] },
+  { name: "YOLOv8", side: "ml", usedIn: ["conflict-detection"] },
+  { name: "Swin Transformer", side: "ml", usedIn: ["conflict-detection"] },
+  { name: "Python", side: "ml", usedIn: ["conflict-detection", "ctximg"] },
+  { name: "PyTorch", side: "ml", usedIn: ["conflict-detection", "ctximg"] },
+  { name: "Computer vision", side: "ml", usedIn: ["conflict-detection", "ctximg"] },
+  { name: "NumPy", side: "ml", usedIn: ["ctximg"] },
+  { name: "CLIP embeddings", side: "ml", usedIn: ["ctximg"] },
+  { name: "OpenCLIP", side: "ml", usedIn: ["ctximg"] },
+  { name: "SigLIP 2", side: "ml", usedIn: ["ctximg"] },
+  { name: "C++", side: "dsa", usedIn: ["dsa"] },
+];
+
+/* On the resume but in none of the projects above, so listed without lines. */
+export const otherSkills = ["SQL", "Express", "JWT auth", "MongoDB", "MySQL", "Docker", "Postman", "Linux"];
+
+/* Competitive programming sits beside the projects, joined to C++. The two
+   figures are the ones Prashant gave: 700+ problems across platforms, and his
+   LeetCode contest rating. */
+export const dsa = {
+  slug: "dsa",
+  name: "DSA",
+  note: "700+ problems solved. LeetCode contest rating 1600+.",
 } as const;
 
 /* The typing race. His pace is from keybr.com and is edited here by hand,

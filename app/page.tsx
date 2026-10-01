@@ -1,8 +1,8 @@
 import { Hero } from "@/components/home/Hero";
 import { Lens } from "@/components/home/Lens";
 import { Measured } from "@/components/home/Measured";
+import { Skills } from "@/components/home/Skills";
 import { Statement } from "@/components/home/Statement";
-import { StickerWall } from "@/components/home/StickerWall";
 import { TypeRace } from "@/components/home/TypeRace";
 import { WorkTrack } from "@/components/home/WorkTrack";
 import { Footer } from "@/components/site/Footer";
@@ -24,7 +24,7 @@ export default async function Home() {
         <Measured />
         <TypeRace />
         <Lens photos={photos} reach={reach} caption={lensDetails ? describePhoto(lensDetails) || null : null} />
-        <StickerWall />
+        <Skills />
       </main>
       <Footer />
     </PageTransition>

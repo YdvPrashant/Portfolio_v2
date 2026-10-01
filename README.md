@@ -39,6 +39,6 @@ Kept in `.env.local`, never committed:
 ## Pages
 
 - `/` the name, a statement, selected work, measured results, a typing race,
-  photographs, the CV and contact.
+  photographs, skills and contact.
 - `/work/prism`, `/work/conflict-detection`, `/work/ctximg` case studies.
 - `/photography` every photograph on an endless field you can drag.

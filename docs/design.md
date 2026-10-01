@@ -27,7 +27,7 @@ tied motion rather than timed motion, and very few colours.
 | A photograph set into a sentence that grows to fill the screen | Gianluca Gradogna ("Through this lens") | Image in text |
 | Photographs scattered at several depths around their heading | Lando Norris, Floema, Getty's Tracing Art | Loose scatter with parallax |
 | An endless field of photographs you drag around | Gionatan Nese, Getty's Tracing Art | Drag to explore |
-| The CV as a sheet of stickers printed flat in the site's own inks: a blue university seal, a yellow burst for 1600+, a keycap drawn in line for 74.8 wpm, a cyan Lucknow postage stamp, PRISM in misregistered stripes, and the stack as one-colour die-cut logos. They slap on when seen; point to lift one, drag it anywhere | WC26 Unofficial Player Album (Honorable Mention 2026), Dave Holloway (Honorable Mention), Lando Norris | Die-cut stickers as collectable objects; information you can pick up; a loose collage. It replaced a mono data sheet (bland) and a split-flap board, which he turned down. The first sticker version, with brand colours, gradients and holographic foil, was redone flat because it did not match the rest of the site |
+| Skills: web on the left, machine learning on the right, the projects between them, joined by a hairline for every skill a project used | See "Skills" below | Rebuilt on 2026-10-01; it replaced the CV sticker wall |
 | The name in halftone dots at the foot of every page | Opal Tadpole (Site of the Year), Lama Lama | Dot matrix wordmark |
 | A different ground for each section | Lando Norris | Paper, ink and one blue field in rhythm |
 | A playful thing to do | Don't Board Me, Why Zero | Their gates became an optional typing race |
@@ -68,6 +68,29 @@ left as it is). Each addition carries real information:
   views; the photograph that fills the screen on the home page carries the
   same line once it is full size.
 
+## Skills
+
+Rebuilt on 2026-10-01 in place of the CV, which had been a sheet of stickers
+(and before that a mono data sheet and a split-flap board). The brief was to
+treat the section as skills, not a CV, and keep one idea from the CV mockups:
+point at a project and the skills it used light up. Three still layouts (one
+block of words, two columns, a matrix) were turned down as too busy; he asked
+for something animated but not overdone, calm and free of clutter. Of three
+moving directions (these threads, overlapping circles, and one project's
+skills at a time) he picked the threads.
+
+- The two halves are the intro's own line, full-stack web and applied machine
+  learning, with the projects in between bridging them. DSA sits below,
+  joined to C++.
+- Each line is measured from where its two words sit, so it follows any
+  layout; a phone gets the projects down the left and every skill to their
+  right.
+- The lines draw out from each project in turn as the section scrolls in,
+  scrubbed by the scroll. Point at a project (or tab to it, or tap it) and only
+  its lines stay, in blue; point at a skill to see every project that used it.
+- Skills on the resume that no project here uses are listed under the
+  drawing, without lines.
+
 ## Rules kept throughout
 
 - Every element carries information. No clocks, coordinates, scroll cues or
@@ -80,16 +103,16 @@ left as it is). Each addition carries real information:
 - The phone number never appears.
 - Every page holds at 360px wide without sideways scrolling.
 - Reduced motion turns off the drift of the photograph in the name, the
-  springs, the parallax and the photo zoom, and shows every word and bar fully
-  drawn.
+  springs, the parallax and the photo zoom, and shows every word, bar and line
+  fully drawn.
 
 ## System
 
 - Type: Mona Sans (variable, weight 200 to 900, width 75 to 125), Newsreader
   italic for accents, JetBrains Mono for data.
 - Colour: paper #F0EFEB, ink #0F0F0F, electric blue #2B2BFF (#8F8FFF on dark),
-  and the three process inks in small doses: the misregistered PRISM sticker,
-  the email address and the proofreader's pen.
+  and the three process inks in small doses: the email address and the
+  proofreader's pen.
 - Grid: 12 columns, side padding clamp(16px, 3vw, 40px).
 - One scroll loop (lib/scroll.ts) turns scroll position into progress values
   from geometry cached at resize, so nothing reads layout while scrolling.
