@@ -1,49 +1,56 @@
 import Link from "next/link";
+import { preload } from "react-dom";
 import { projects } from "@/lib/content";
-import { StripeName } from "./StripeName";
+import { photoUrl, type Photo } from "@/lib/unsplash";
+import { PosterName } from "./PosterName";
 
-const LINES = ["PRASHANT", "YADAV"] as const;
-const ALIGN = ["left", "right"] as const;
+/* The first screen, set like a Swiss poster: one line about the work hung from
+   the top, the name in lowercase filling the rest, and the three projects in
+   the room its second line leaves. One of Prashant's photographs shows through
+   the letters. The sources are in docs/design.md. */
 
-export function Hero() {
+const LINES = ["prashant", "yadav"] as const;
+
+export function Hero({ photo }: { photo: Photo | null }) {
+  const sizes = photo ? { small: photoUrl(photo.src, 1200, 80), large: photoUrl(photo.src, 2400, 80) } : null;
+  if (sizes) {
+    // The same breakpoint as the stylesheet, so only one size is fetched.
+    preload(sizes.small, { as: "image", fetchPriority: "high", media: "(max-width: 767px)" });
+    preload(sizes.large, { as: "image", fetchPriority: "high", media: "(min-width: 768px)" });
+  }
+
   return (
-    <section
-      id="hero"
-      data-theme="paper"
-      className="relative flex flex-col px-pad pb-10 pt-[calc(var(--header)+clamp(24px,5vh,72px))] md:landscape:min-h-svh"
-    >
+    <section id="hero" data-theme="paper" className="hero">
       <h1 className="sr-only">Prashant Yadav, software engineer</h1>
 
-      <p className="t-l mb-[clamp(40px,8vh,96px)] max-w-[24ch] text-balance">
-        Software engineer in Lucknow, working across full-stack web and applied{" "}
-        <span className="serif">machine learning</span>.
+      <p className="t-m max-w-[30ch] text-pretty">
+        Software engineer in Lucknow, working across full-stack web and applied machine learning.
       </p>
 
-      <div className="relative mt-auto" style={{ touchAction: "pan-y" }}>
-        <StripeName lines={LINES} align={ALIGN} className="hero-name" />
-        {/* On wide screens the index sits in the space left of YADAV, its
-            last rule on YADAV's baseline; elsewhere it follows the name. */}
-        <nav aria-label="Selected work" className="hero-index">
-          <p className="t-mono mb-3 text-muted">Selected work</p>
-          <ol className="border-t border-rule">
+      <PosterName lines={LINES} photo={sizes}>
+        <nav aria-label="Selected work">
+          <ol>
             {projects.map((p) => (
-              <li key={p.slug} className="border-b border-rule">
+              <li key={p.slug}>
                 <Link
                   href={`/work/${p.slug}`}
                   transitionTypes={["nav-forward"]}
-                  className="group flex items-baseline gap-4 py-[9px]"
+                  className="group grid grid-cols-[2em_1fr_auto] items-baseline gap-3 border-t border-rule py-2"
                 >
                   <span className="t-mono text-muted">{p.index}</span>
-                  <span className="t-small font-[560] transition-transform duration-500 ease-out-quint group-hover:translate-x-1.5">
+                  <span
+                    data-baseline
+                    className="whitespace-nowrap text-[15px] font-[580] tracking-[-0.01em] transition-[translate,color] duration-500 ease-out-quint group-hover:translate-x-1.5 group-hover:text-accent"
+                  >
                     {p.title}
                   </span>
-                  <span className="t-mono ml-auto text-muted">{p.year}</span>
+                  <span className="t-mono text-muted">{p.year}</span>
                 </Link>
               </li>
             ))}
           </ol>
         </nav>
-      </div>
+      </PosterName>
     </section>
   );
 }

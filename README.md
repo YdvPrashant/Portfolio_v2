@@ -23,6 +23,7 @@ npm run typecheck
 | The CV people download | `public/prashant-yadav-resume.pdf` |
 | Project screenshots | `public/projects/` |
 | Photographs | Live from unsplash.com/@pr7nt through `lib/unsplash.ts`, refreshed hourly |
+| A photograph's camera, settings and views | `app/api/photos/[id]/route.ts`, asked for when one is opened and kept a day |
 | Like counter | `app/api/likes/route.ts`, Upstash Redis through the Vercel Marketplace |
 | Typing speed | `typing.wpm` in `lib/content.ts`, edited by hand (keybr has no API) |
 

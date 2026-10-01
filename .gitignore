@@ -19,3 +19,7 @@ next-env.d.ts
 *.pem
 npm-debug.log*
 /coverage
+
+# design mockups and browser logs from Claude sessions
+/.superpowers/
+/.playwright-mcp/

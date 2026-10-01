@@ -250,25 +250,128 @@ svg {
 
 /* -------------------------------------------------------------------- hero */
 
-/* The canvas starts at the proportions the name will have, so nothing below it
-   moves when the font arrives and the stripes are drawn. */
-.hero-name canvas {
-  aspect-ratio: 1360 / 567;
+/* The drift of the photograph in the name. Registered so the pointer's part
+   can ease; the scroll's part follows the scroll exactly. */
+@property --dx {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
 }
-.hero-index {
-  margin-top: 24px;
+@property --dy {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
 }
-/* YADAV is about 62% of the width, so the index fits in the rest. */
+@property --sy {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding: calc(var(--header) + clamp(16px, 3.5vh, 44px)) var(--pad) clamp(14px, 2.4vh, 28px);
+}
+.poster {
+  position: relative;
+  margin-top: auto;
+  padding-top: clamp(24px, 4vh, 48px);
+}
+/* PosterName reads the small viewport height from this. */
+.poster-probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100svh;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* PosterName sizes the name; the first paint starts close to where it lands. */
+.poster-name {
+  font-size: 22.5vw;
+  font-weight: 640;
+  font-stretch: 100%;
+  line-height: 0.8;
+  letter-spacing: -0.052em;
+  padding-bottom: 0.13em;
+  /* the p's side bearing, so its stem sits on the margin */
+  margin-left: -0.055em;
+  color: var(--color-ink);
+  transition: color 0.9s ease;
+}
+.poster-name > span {
+  display: block;
+  width: max-content;
+  white-space: nowrap;
+}
+/* The y has no side bearing to speak of, so it moves a hair right to line up. */
+.poster-name > span + span {
+  margin-left: 0.035em;
+}
+.poster-base {
+  display: inline-block;
+  width: 0;
+  height: 0;
+}
+.poster-name.has-photo {
+  background-image: var(--photo-large);
+  background-repeat: no-repeat;
+  /* a little wider than the name, so the drift never shows an edge */
+  background-size: calc(100% + 48px) auto;
+  background-position:
+    calc(50% + var(--dx) * 1px)
+    calc(42% + (var(--dy) + var(--sy)) * 1px);
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition:
+    color 0.9s ease,
+    --dx 1.2s var(--ease-out-quint),
+    --dy 1.2s var(--ease-out-quint);
+}
+.poster-name[data-lit] {
+  color: transparent;
+}
+.poster-aside {
+  margin-top: 22px;
+}
+/* Wide screens set the index beside the second line; PosterName puts it there
+   and stacks it again if it does not fit. */
 @media (min-width: 1024px) {
-  .hero-index {
+  .poster-aside {
     position: absolute;
-    left: 0;
+    right: 0;
     bottom: 0;
-    width: min(420px, calc(38% - 32px));
     margin-top: 0;
   }
-  .hero-index ol li:last-child {
-    border-bottom: 0;
+  .poster[data-stack] .poster-aside {
+    position: static;
+    margin-top: 22px;
+  }
+}
+@media (max-width: 767px) {
+  .hero {
+    min-height: 0;
+    padding-bottom: 32px;
+  }
+  .poster {
+    margin-top: 0;
+    padding-top: 30px;
+  }
+  .poster-name {
+    font-size: 26vw;
+    font-stretch: 75%;
+  }
+  .poster-name.has-photo {
+    background-image: var(--photo-small);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster-name,
+  .poster-name.has-photo {
+    transition: none;
   }
 }
 
@@ -318,7 +421,8 @@ svg {
 .work-num {
   font-size: clamp(4.5rem, 16vw, 7rem);
 }
-.work-progress {
+.work-progress,
+.work-ruler {
   display: none;
 }
 
@@ -390,6 +494,38 @@ svg {
     background: var(--fg);
     transform-origin: 0 50%;
     transform: scaleX(var(--p, 0));
+  }
+  /* Each project's name ends where the slide reaches it, with a tick on the
+     line; the one in view is inked. */
+  .work-ruler {
+    display: block;
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    bottom: calc(var(--pad) + 1px);
+  }
+  .work-stop {
+    position: absolute;
+    bottom: 10px;
+    left: calc(var(--at, 0) * 100%);
+    translate: -100% 0;
+    white-space: nowrap;
+    color: var(--muted);
+    transition: color 0.3s ease;
+  }
+  .work-stop::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -10px;
+    width: 1px;
+    height: 7px;
+    background: currentColor;
+  }
+  .work-stop[aria-current],
+  .work-stop:hover,
+  .work-stop:focus-visible {
+    color: var(--fg);
   }
 }
 
@@ -673,6 +809,18 @@ svg {
   z-index: 2;
   clip-path: inset(50% 50% 50% 50%);
 }
+/* What the photograph was taken with, once it fills the screen. */
+.lens-caption {
+  position: absolute;
+  left: var(--pad);
+  bottom: var(--pad);
+  z-index: 3;
+  max-width: calc(100% - 2 * var(--pad));
+  color: var(--color-paper);
+  opacity: clamp(0, calc((var(--e, 0) - 0.86) * 8), 1);
+  text-shadow: 0 1px 14px rgb(15 15 15 / 0.5);
+  pointer-events: none;
+}
 
 /* Reduced motion: no pinning and no zoom, just the sentence and the photo. */
 @media (prefers-reduced-motion: reduce) {
@@ -701,6 +849,13 @@ svg {
     aspect-ratio: 16 / 9;
     clip-path: none !important;
     transform: none !important;
+  }
+  .lens-caption {
+    position: static;
+    margin-top: 12px;
+    opacity: 1;
+    color: var(--muted);
+    text-shadow: none;
   }
 }
 
@@ -945,8 +1100,8 @@ svg {
   background: #2b2bff;
 }
 
-/* PRISM in the name's treatment: three process inks in stripes, printed a
-   hair out of register, pulling further apart when the sticker is lifted. */
+/* PRISM in three process inks in stripes, printed a hair out of register,
+   pulling further apart when the sticker is lifted. */
 .misreg {
   position: relative;
   display: inline-block;
@@ -1109,40 +1264,6 @@ svg {
     opacity: 0;
     scale: 0.97;
   }
-}
-
-/* --------------------------------------------------------------- preloader */
-
-.preloader {
-  display: none;
-}
-html[data-intro="pending"] {
-  overflow: hidden;
-}
-html[data-intro="pending"] .preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: flex-end;
-  padding: var(--pad);
-  background: var(--color-paper);
-  color: var(--color-ink);
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 0.95s var(--ease-in-out-quart);
-}
-.preloader-count {
-  font-size: clamp(7rem, 24vw, 24rem);
-  transition:
-    translate 0.8s var(--ease-in-out-quart),
-    opacity 0.5s ease;
-}
-html[data-intro="pending"] .preloader[data-state="leaving"] {
-  clip-path: inset(0 0 100% 0);
-}
-.preloader[data-state="leaving"] .preloader-count {
-  translate: 0 -40%;
-  opacity: 0;
 }
 
 /* -------------------------------------------------------- view transitions */

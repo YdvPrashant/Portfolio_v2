@@ -1,13 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import type { Photo } from "@/lib/unsplash";
+import { useEffect, useRef, useState } from "react";
+import { describePhoto, type Photo, type PhotoDetails } from "@/lib/unsplash";
 import { unsplashLoader } from "@/lib/unsplash-loader";
 
 /* One photograph, whole and uncropped, in a native modal dialog: it traps
    focus, closes on Escape and hands focus back to the frame that opened it.
-   The arrow keys step through the set. */
+   The arrow keys step through the set. Under it, the camera and settings it
+   was taken with and how often it has been seen, asked for only once it is
+   open. */
 
 type Props = {
   photos: Photo[];
@@ -38,6 +40,25 @@ export function PhotoViewer({ photos, index, onClose, onChange }: Props) {
   }, [index, n, onChange]);
 
   const photo = index !== null ? photos[index] : null;
+
+  // Each photograph's line, once known; an empty string when Unsplash has none.
+  const [lines, setLines] = useState<Record<string, string>>({});
+  const id = photo?.id;
+  const known = id !== undefined && id in lines;
+  useEffect(() => {
+    if (!id || known) return;
+    let alive = true;
+    fetch(`/api/photos/${id}`)
+      .then((res) => (res.ok ? (res.json() as Promise<PhotoDetails>) : null))
+      .then((details) => {
+        if (alive) setLines((all) => ({ ...all, [id]: details ? describePhoto(details) : "" }));
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [id, known]);
+  const line = id ? lines[id] : "";
 
   return (
     <dialog
@@ -77,11 +98,13 @@ export function PhotoViewer({ photos, index, onClose, onChange }: Props) {
             />
           </figure>
 
-          <div className="t-small flex items-center justify-between gap-6">
+          <div className="t-small flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
             <button type="button" onClick={() => onChange((index! - 1 + n) % n)} className="hit link-line">
               &larr; Previous
             </button>
-            {photo.alt && <p className="hidden text-center text-[var(--muted)] sm:block">{photo.alt}</p>}
+            <p className="t-mono order-first min-h-[1.5em] w-full text-center text-[var(--muted)] sm:order-none sm:w-auto">
+              {line}
+            </p>
             <button type="button" onClick={() => onChange((index! + 1) % n)} className="hit link-line">
               Next &rarr;
             </button>

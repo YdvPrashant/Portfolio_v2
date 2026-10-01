@@ -11,8 +11,8 @@ import { StickerSurface } from "./StickerSurface";
    They are printed the way the rest of the site is: flat, in its own inks
    (black, white, electric blue and the three process colours), with a white
    die-cut edge and a thin black cut line, and no shadow until one is lifted.
-   PRISM is set in the same striped, misregistered inks as the name at the top
-   of the page, and the rating burst carries the footer's halftone.
+   PRISM is set in striped, misregistered process inks, and the rating burst
+   carries the footer's halftone.
 
    Point at a sticker to lift it, drag it anywhere, or press Tidy up. The
    stickers are drawn here on the server; StickerSurface only handles the

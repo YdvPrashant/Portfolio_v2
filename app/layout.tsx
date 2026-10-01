@@ -5,10 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
-import { InlineScript } from "@/components/site/InlineScript";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { person } from "@/lib/content";
-import { introScript } from "@/lib/intro-script";
 import { description, siteUrl } from "@/lib/site";
 
 // Mona Sans with its width axis: the hero and the numerals use the extremes.
@@ -65,7 +63,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${mona.variable} ${newsreader.variable} ${jetbrains.variable}`}
     >
       <body>
-        <InlineScript html={introScript} />
         <Header />
         <SmoothScroll />
         {children}

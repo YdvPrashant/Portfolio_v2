@@ -19,8 +19,7 @@ tied motion rather than timed motion, and very few colours.
 
 | On this site | Borrowed from | What was taken |
 | --- | --- | --- |
-| The name drawn in horizontal stripes | Son Daven (Site of the Month), NOTHIN' (portfolio winner) | Striped display letters; the name as the whole hero |
-| Stripes that shear and split into cyan, magenta and yellow under the pointer and as you scroll away | Prism's own refracted M, print misregistration | This site's own idea, built on the two above |
+| The first screen: the name in lowercase filling the screen, one line hung above it, the three projects beside its second line | See "The first screen" below | Rebuilt on 2026-10-01 from Swiss posters rather than Awwwards |
 | Serif italic words inside grotesk statements | Artiom Yakushev, Lando Norris (Site of the Year) | Mixed families to weight a few words |
 | Words that turn from grey to ink as you scroll | Artiom Yakushev, Elliott Mangham, Cerebrium | Scroll scrubbed reading |
 | Work that slides sideways as you scroll, with large numerals | Gianluca Gradogna, Boc.Studio, Lama Lama | Numbered index, slide rather than stack |
@@ -28,33 +27,69 @@ tied motion rather than timed motion, and very few colours.
 | A photograph set into a sentence that grows to fill the screen | Gianluca Gradogna ("Through this lens") | Image in text |
 | Photographs scattered at several depths around their heading | Lando Norris, Floema, Getty's Tracing Art | Loose scatter with parallax |
 | An endless field of photographs you drag around | Gionatan Nese, Getty's Tracing Art | Drag to explore |
-| The CV as a sheet of stickers printed flat in the site's own inks: a blue university seal, a yellow burst for 1600+, a keycap drawn in line for 74.8 wpm, a cyan Lucknow postage stamp, PRISM in the name's misregistered stripes, and the stack as one-colour die-cut logos. They slap on when seen; point to lift one, drag it anywhere | WC26 Unofficial Player Album (Honorable Mention 2026), Dave Holloway (Honorable Mention), Lando Norris | Die-cut stickers as collectable objects; information you can pick up; a loose collage. It replaced a mono data sheet (bland) and a split-flap board, which he turned down. The first sticker version, with brand colours, gradients and holographic foil, was redone flat because it did not match the rest of the site |
+| The CV as a sheet of stickers printed flat in the site's own inks: a blue university seal, a yellow burst for 1600+, a keycap drawn in line for 74.8 wpm, a cyan Lucknow postage stamp, PRISM in misregistered stripes, and the stack as one-colour die-cut logos. They slap on when seen; point to lift one, drag it anywhere | WC26 Unofficial Player Album (Honorable Mention 2026), Dave Holloway (Honorable Mention), Lando Norris | Die-cut stickers as collectable objects; information you can pick up; a loose collage. It replaced a mono data sheet (bland) and a split-flap board, which he turned down. The first sticker version, with brand colours, gradients and holographic foil, was redone flat because it did not match the rest of the site |
 | The name in halftone dots at the foot of every page | Opal Tadpole (Site of the Year), Lama Lama | Dot matrix wordmark |
-| A counter that runs to 100 before the first view | Gianluca Gradogna, Olha Lazarieva, Gil Huybrecht | Big numerals in the corner |
 | A different ground for each section | Lando Norris | Paper, ink and one blue field in rhythm |
 | A playful thing to do | Don't Board Me, Why Zero | Their gates became an optional typing race |
 | Page transitions with a shared image | Boc.Studio, Cerebrium | Done natively with React's ViewTransition |
+
+## The first screen
+
+Rebuilt on 2026-10-01. The brief was Swiss design principles, clean and free of
+clutter, with ideas taken from anywhere rather than only from Awwwards. Three
+directions were mocked up (a type poster, a photobook spread, a ruled index);
+the poster was picked, then given one of his photographs inside the letters.
+
+| On the first screen | Borrowed from | What was taken |
+| --- | --- | --- |
+| The name as the whole poster, huge, with small text hung around it | Josef Müller-Brockmann, der Film (1960) | Extreme contrast of scale, nothing in between |
+| The name in lowercase | Armin Hofmann's theatre posters for Basel | Lowercase letterforms used as the image |
+| The name fills its room both ways, changing its width axis rather than only its size, so any window gets a poster made for it | Karl Gerstner, Designing Programmes (1964); Adrian Frutiger's Univers, a family planned as a grid of widths | A layout written as a rule, not drawn once |
+| A photograph of his own, sky over a ridge, showing through the letters | Swiss photographic posters by Müller-Brockmann and Hofmann | Photography rather than decoration |
+| One line about the work, the projects in the room the second line leaves, everything on the 12 column grid and flush left | Emil Ruder, Typographie (1967) | Asymmetric, flush left, ordered by position and size alone |
+
+The striped CMY name and the counter that ran to 100 before the first view
+were taken out. The photograph drifts a little against the pointer and lags
+behind the scroll; nothing else moves.
+
+## Additions, 2026-10-01
+
+Asked to improve, not redo, the project section and photography (Race me was
+left as it is). Each addition carries real information:
+
+- The progress line under the sliding projects is a ruler. Each project's
+  name ends where the slide reaches it, the one in view is inked, and a click
+  slides straight there.
+- Every project panel lists its stack and links out: Prism to the live site,
+  the other two to their code on GitHub.
+- The photographs heading says how often the profile has been seen and
+  downloaded, from Unsplash's own counters.
+- Opening a photograph shows the camera and settings it was taken with and its
+  views; the photograph that fills the screen on the home page carries the
+  same line once it is full size.
 
 ## Rules kept throughout
 
 - Every element carries information. No clocks, coordinates, scroll cues or
   decorative labels. Large empty areas get real content.
-- Motion follows the scroll or the pointer. The only thing that runs by itself
-  is the intro, once per session.
+- Motion follows the scroll or the pointer. Nothing runs by itself, apart from
+  the photograph fading into the name once it has loaded.
 - No custom cursor, no card grids, no dashes in body copy, no slogans.
 - Numbers come from the resume and nowhere else. The conflict detection
   project is shown as a diagram and says so, because it has no interface.
 - The phone number never appears.
 - Every page holds at 360px wide without sideways scrolling.
-- Reduced motion turns off the intro, the springs, the parallax and the photo
-  zoom, and shows every word and bar fully drawn.
+- Reduced motion turns off the drift of the photograph in the name, the
+  springs, the parallax and the photo zoom, and shows every word and bar fully
+  drawn.
 
 ## System
 
 - Type: Mona Sans (variable, weight 200 to 900, width 75 to 125), Newsreader
   italic for accents, JetBrains Mono for data.
 - Colour: paper #F0EFEB, ink #0F0F0F, electric blue #2B2BFF (#8F8FFF on dark),
-  and the three process inks only where the name splits.
+  and the three process inks in small doses: the misregistered PRISM sticker,
+  the email address and the proofreader's pen.
 - Grid: 12 columns, side padding clamp(16px, 3vw, 40px).
 - One scroll loop (lib/scroll.ts) turns scroll position into progress values
   from geometry cached at resize, so nothing reads layout while scrolling.

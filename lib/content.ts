@@ -184,6 +184,11 @@ export const statement = {
    leaves the profile, the first landscape frame stands in. */
 export const lensPhoto = "w3cuxkIR08s";
 
+/* The photograph that shows through the name on the first screen: sky in the
+   first line, the ridge at the foot of the second. If it ever leaves the
+   profile, the name is set in ink. */
+export const heroPhoto = "d2zRUiJiC6Q";
+
 /* The measured section. Every value is from the resume. */
 export type Bar = { label: string; value: number; display: string; muted?: boolean };
 

@@ -3,9 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { lensPhoto } from "@/lib/content";
-import type { Photo } from "@/lib/unsplash";
-import { UNSPLASH_PROFILE } from "@/lib/unsplash";
+import type { Photo, Reach } from "@/lib/unsplash";
+import { lensPhotoOf, UNSPLASH_PROFILE } from "@/lib/unsplash";
 import { unsplashLoader } from "@/lib/unsplash-loader";
 import { pageTop, subscribe, useScrollProgress } from "@/lib/scroll";
 
@@ -31,7 +30,7 @@ const SLOTS: Slot[] = [
   { x: 57, y: 79, w: 11, d: 1 },
 ];
 
-function Expanding({ photo }: { photo: Photo }) {
+function Expanding({ photo, caption }: { photo: Photo; caption: string | null }) {
   const section = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const slot = useRef<HTMLSpanElement>(null);
@@ -99,12 +98,14 @@ function Expanding({ photo }: { photo: Photo }) {
             style={{ backgroundColor: photo.color }}
           />
         </div>
+        {/* Once the photograph fills the screen: what it was taken with. */}
+        {caption && <p className="lens-caption t-mono">{caption}</p>}
       </div>
     </section>
   );
 }
 
-function Collage({ photos, total }: { photos: Photo[]; total: number }) {
+function Collage({ photos, total, reach }: { photos: Photo[]; total: number; reach: Reach | null }) {
   const ref = useRef<HTMLDivElement>(null);
   useScrollProgress(ref, "through");
 
@@ -160,7 +161,14 @@ function Collage({ photos, total }: { photos: Photo[]; total: number }) {
             Photographs
           </h2>
           <p className="t-m mt-4 text-muted">
-            {total} on Unsplash, loaded live from{" "}
+            {reach ? (
+              <>
+                {total} on Unsplash, seen {reach.views.toLocaleString("en-US")} times and downloaded{" "}
+                {reach.downloads.toLocaleString("en-US")}. Loaded live from{" "}
+              </>
+            ) : (
+              <>{total} on Unsplash, loaded live from </>
+            )}
             <a href={UNSPLASH_PROFILE} className="link-line text-fg" target="_blank" rel="noopener">
               @pr7nt
             </a>
@@ -211,7 +219,15 @@ function Collage({ photos, total }: { photos: Photo[]; total: number }) {
   );
 }
 
-export function Lens({ photos }: { photos: Photo[] }) {
+type Props = {
+  photos: Photo[];
+  /** How often the profile has been seen and downloaded, if Unsplash said. */
+  reach: Reach | null;
+  /** The camera line for the photograph in the sentence. */
+  caption: string | null;
+};
+
+export function Lens({ photos, reach, caption }: Props) {
   if (photos.length === 0) {
     return (
       <section id="lens" data-theme="ink" className="px-pad py-[clamp(88px,14vh,180px)]">
@@ -223,15 +239,13 @@ export function Lens({ photos }: { photos: Photo[] }) {
     );
   }
 
-  // The chosen photograph, or failing that the first landscape frame.
-  const hero =
-    photos.find((p) => p.id === lensPhoto) ?? photos.find((p) => p.width > p.height) ?? photos[0];
+  const hero = lensPhotoOf(photos)!;
   const rest = photos.filter((p) => p.id !== hero.id);
 
   return (
     <div id="lens">
-      <Expanding photo={hero} />
-      <Collage photos={rest} total={photos.length} />
+      <Expanding photo={hero} caption={caption} />
+      <Collage photos={rest} total={photos.length} reach={reach} />
     </div>
   );
 }
