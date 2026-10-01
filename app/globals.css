@@ -1119,19 +1119,296 @@ svg {
   }
 }
 
-/* ------------------------------------------------------------------ footer */
+/* ------------------------------------------------------------------- flyer */
 
-.email-link {
-  --sx: 0;
-  --sy: 0;
-  text-shadow:
-    calc(var(--sx) * 7px) calc(var(--sy) * 3px) 0 rgb(0 160 233 / 0.9),
-    calc(var(--sx) * -5px) calc(var(--sy) * -2px) 0 rgb(228 0 127 / 0.85);
-  transition: text-shadow 0.4s var(--ease-out-quint);
+/* The contact section: a paper flyer on the ink wall, torn along a
+   perforation into a fringe of tabs. */
+.flyer {
+  padding-top: calc(var(--header) + clamp(14px, 3vh, 36px));
 }
-.halftone canvas {
-  --dot: #3a3a37;
-  --dot-lit: #f0efeb;
+.flyer-sheet {
+  --in: clamp(18px, 2.4vw, 38px);
+  padding: var(--in) var(--in) clamp(24px, 4vh, 44px);
+  border-bottom: 2px dashed rgb(15 15 15 / 0.28);
+}
+.flyer-title {
+  margin-left: -0.04em;
+}
+.flyer-body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  align-items: end;
+  margin-top: clamp(14px, 2.6vh, 30px);
+}
+.flyer-main {
+  grid-column: 1 / -1;
+}
+/* Below 900px it fills the sheet's width; 13.73em is the address's measure. */
+.flyer-address {
+  font-size: min(calc((100vw - 2 * var(--pad) - 2 * var(--in)) / 13.73 * 0.98), 3.1rem);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  font-weight: 520;
+  overflow-wrap: anywhere;
+}
+.flyer-ways {
+  grid-column: 1 / -1;
+  margin-top: 22px;
+}
+.flyer-ways li + li {
+  border-top: 1px solid var(--rule);
+}
+.flyer-ways a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 7px;
+  transition: color 0.3s ease;
+}
+.flyer-ways a:hover,
+.flyer-ways a:focus-visible {
+  color: var(--accent);
+}
+.flyer-ways small {
+  font-size: 0.62em;
+  font-weight: 460;
+  color: var(--muted);
+}
+@media (min-width: 900px) {
+  .flyer-main {
+    grid-column: 1 / 8;
+  }
+  .flyer-address {
+    font-size: clamp(1.6rem, 3vw, 3.1rem);
+  }
+  .flyer-ways {
+    grid-column: 9 / 13;
+    margin-top: 0;
+  }
+}
+
+/* The fringe. Its type size sets the height, so the address always fits
+   turned upright. The slits between the tabs show the wall. */
+.tabs {
+  display: flex;
+  gap: 2px;
+  height: 16.5em;
+  font-size: clamp(12px, 0.98vw, 14.5px);
+}
+.tab,
+.tab-fall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.tab {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  transform-origin: 50% 0;
+  transition:
+    translate 0.35s var(--ease-out-quint),
+    rotate 0.35s var(--ease-out-quint);
+}
+.tab[data-pulling] {
+  cursor: grabbing;
+  transition: none;
+}
+@media (hover: hover) {
+  .tab:not([data-gone]):hover {
+    translate: 0 3px;
+    rotate: 0.6deg;
+  }
+}
+.tab-face {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  white-space: nowrap;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.tab-face b {
+  display: block;
+  font-weight: 640;
+}
+/* A torn tab leaves a ragged stub along the perforation. */
+.tab[data-gone] {
+  visibility: hidden;
+  cursor: default;
+}
+.tab[data-gone]::before {
+  content: "";
+  visibility: visible;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: var(--color-paper);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 88% 85%, 76% 55%, 62% 90%, 50% 60%, 37% 100%, 24% 65%, 12% 95%, 0 70%);
+}
+.tab-copied {
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-paper);
+}
+.tab-fall {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  transition:
+    transform 1s cubic-bezier(0.55, 0, 0.8, 0.3),
+    opacity 0.3s ease 0.7s;
+}
+.flyer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  padding-top: 26px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .tab:hover {
+    translate: none;
+    rotate: none;
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------- archive: the @ */
+
+/* The contact section as it was proposed beside the flyer
+   (app/archive/contact-at): the address across one screen, its @ as large as
+   the screen allows with a photograph inside it. */
+.at {
+  --part: clamp(1.5rem, 3.2vw, 3.4rem);
+  --cg: clamp(10px, 1.4vw, 24px);
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: calc(var(--header) + clamp(16px, 3.5vh, 44px));
+  /* the @ is wider while it is still turned */
+  overflow-x: clip;
+}
+.at-line {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--cg);
+  padding-block: clamp(8px, 2vh, 24px);
+}
+.at-part {
+  font-size: var(--part);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 560;
+  white-space: nowrap;
+  translate: 0 0.06em;
+  transition: color 0.3s ease;
+}
+.at-line:hover .at-part,
+.at-line:focus-visible .at-part {
+  color: #fff;
+}
+.at-user {
+  justify-self: end;
+}
+.at-domain {
+  justify-self: start;
+}
+/* As tall as 70% of the screen, unless the halves beside it leave less room
+   across: each gets as much room as the longer one, ydvprashant0508, which is
+   8.11em of its size. The @'s box is 0.94em wide. */
+.at-glyph {
+  --p: 1;
+  display: block;
+  font-size: min(70svh, calc((100vw - 2 * var(--pad) - 16.3 * var(--part) - 2 * var(--cg)) / 0.96));
+  line-height: 0.9;
+  font-weight: 700;
+  padding-inline: 0.02em;
+  color: var(--color-paper);
+  rotate: calc((1 - var(--p)) * -45deg);
+}
+.at-glyph.has-photo {
+  background-image: var(--photo-large);
+  background-repeat: no-repeat;
+  background-size: calc(100% + 40px) auto;
+  background-position:
+    calc(50% + var(--dx) * 1px)
+    calc(56% + var(--dy) * 1px + (1 - var(--p)) * 120px);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: brightness(1.14) saturate(1.06);
+  transition:
+    color 0.9s ease,
+    --dx 1.2s var(--ease-out-quint),
+    --dy 1.2s var(--ease-out-quint);
+}
+.at-glyph[data-lit] {
+  color: transparent;
+}
+.at-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 32px;
+  border-top: 1px solid var(--rule);
+  padding-top: 22px;
+}
+/* Narrower screens read the address down the page. */
+@media (max-width: 1023px) {
+  .at {
+    min-height: 0;
+  }
+  .at-line {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2px;
+    padding-block: 34px 30px;
+  }
+  .at-part {
+    font-size: min(7.6vw, 3.4rem);
+    translate: none;
+  }
+  .at-user {
+    justify-self: start;
+  }
+  .at-glyph {
+    justify-self: center;
+    font-size: min(62svh, calc((100vw - 2 * var(--pad)) / 0.96));
+    line-height: 0.86;
+  }
+  .at-glyph.has-photo {
+    background-image: var(--photo-small);
+  }
+  .at-domain {
+    justify-self: end;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .at-glyph {
+    rotate: none;
+  }
+  .at-glyph.has-photo {
+    transition: none;
+  }
 }
 
 /* ------------------------------------------------------------- photography */

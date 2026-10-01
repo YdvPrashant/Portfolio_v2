@@ -189,6 +189,18 @@ export const lensPhoto = "w3cuxkIR08s";
    profile, the name is set in ink. */
 export const heroPhoto = "d2zRUiJiC6Q";
 
+/* The contact section at the foot of every page: a flyer whose tabs each copy
+   the address. */
+export const contact = {
+  headline: "Write to me.",
+  note: "Email is the quickest way to reach me. Each tab below copies the address.",
+} as const;
+
+/* The archived contact section (app/archive/contact-at), where the address's
+   @ is set as large as the screen with this photograph inside it: dusk over a
+   field. If it ever leaves the profile, the @ is set in paper. */
+export const contactPhoto = "71W47WQmcmI";
+
 /* The measured section. Every value is from the resume. */
 export type Bar = { label: string; value: number; display: string; muted?: boolean };
 
